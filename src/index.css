@@ -2,95 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* 
+ * Yemenis in Exile — Design System
+ * Warm earthy palette: terracotta, sand, cream, blush
+ * Typography: Cormorant Garamond (heading) + DM Sans (body)
+ * Aesthetic: Recovered archive with analog grain
+ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 32 40% 80%;
+    --foreground: 20 30% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 32 45% 87%;
+    --card-foreground: 20 30% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 32 45% 87%;
+    --popover-foreground: 20 30% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 10 42% 36%;
+    --primary-foreground: 38 55% 94%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 32 35% 75%;
+    --secondary-foreground: 20 30% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 30 25% 72%;
+    --muted-foreground: 20 18% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 15 45% 48%;
+    --accent-foreground: 38 55% 94%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 22% 68%;
+    --input: 30 22% 68%;
+    --ring: 10 42% 36%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom tokens */
+    --terracotta: 10 42% 36%;
+    --terracotta-light: 14 38% 55%;
+    --sand: 35 45% 80%;
+    --sand-light: 38 50% 90%;
+    --cream: 40 55% 94%;
+    --blush: 18 35% 78%;
+    --warm-brown: 20 30% 25%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Bubble colors */
+    --bubble-blush: 15 38% 80%;
+    --bubble-cream: 38 48% 91%;
+    --bubble-sand: 30 35% 83%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(20, 30%, 15%, 0.1);
+    --shadow-bubble: 0 8px 32px -8px hsl(20, 30%, 15%, 0.18);
+    --shadow-overlay: 0 24px 64px -16px hsl(20, 30%, 15%, 0.25);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 32 40% 85%;
+    --sidebar-foreground: 20 30% 15%;
+    --sidebar-primary: 10 42% 36%;
+    --sidebar-primary-foreground: 38 55% 94%;
+    --sidebar-accent: 32 35% 80%;
+    --sidebar-accent-foreground: 20 30% 15%;
+    --sidebar-border: 30 22% 68%;
+    --sidebar-ring: 10 42% 36%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 20 25% 10%;
+    --foreground: 35 30% 88%;
+    --card: 20 20% 14%;
+    --card-foreground: 35 30% 88%;
+    --popover: 20 20% 14%;
+    --popover-foreground: 35 30% 88%;
+    --primary: 15 45% 55%;
+    --primary-foreground: 20 25% 10%;
+    --secondary: 20 15% 22%;
+    --secondary-foreground: 35 30% 88%;
+    --muted: 20 15% 22%;
+    --muted-foreground: 30 15% 60%;
+    --accent: 15 40% 45%;
+    --accent-foreground: 35 30% 88%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 15% 22%;
+    --input: 20 15% 22%;
+    --ring: 15 45% 55%;
+    --bubble-blush: 15 25% 30%;
+    --bubble-cream: 30 20% 25%;
+    --bubble-sand: 25 18% 28%;
+    --shadow-soft: 0 4px 20px -4px hsl(0, 0%, 0%, 0.3);
+    --shadow-bubble: 0 8px 32px -8px hsl(0, 0%, 0%, 0.4);
+    --shadow-overlay: 0 24px 64px -16px hsl(0, 0%, 0%, 0.5);
+    --sidebar-background: 20 25% 10%;
+    --sidebar-foreground: 35 30% 88%;
+    --sidebar-primary: 15 45% 55%;
+    --sidebar-primary-foreground: 20 25% 10%;
+    --sidebar-accent: 20 15% 18%;
+    --sidebar-accent-foreground: 35 30% 88%;
+    --sidebar-border: 20 15% 22%;
+    --sidebar-ring: 15 45% 55%;
   }
 }
 
@@ -100,6 +113,74 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .bubble-hover {
+    transition: scale 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  }
+  .bubble-hover:hover {
+    scale: 1.06;
+    box-shadow: var(--shadow-bubble);
+    filter: brightness(1.04);
+  }
+}
+
+@layer utilities {
+  .bg-gradient-warm {
+    background: linear-gradient(
+      135deg,
+      hsl(15, 38%, 52%) 0%,
+      hsl(22, 42%, 62%) 25%,
+      hsl(30, 48%, 70%) 50%,
+      hsl(36, 45%, 72%) 75%,
+      hsl(40, 42%, 70%) 100%
+    );
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-bubble {
+    box-shadow: var(--shadow-bubble);
+  }
+
+  .shadow-overlay {
+    box-shadow: var(--shadow-overlay);
+  }
+}
+
+/* Grain texture overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 30;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* Float animation for bubbles */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  33% {
+    transform: translateY(-8px) translateX(3px);
+  }
+  66% {
+    transform: translateY(5px) translateX(-4px);
   }
 }
