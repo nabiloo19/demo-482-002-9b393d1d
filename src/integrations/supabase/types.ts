@@ -25,6 +25,7 @@ export type Database = {
           id: string
           theme: string
           updated_at: string
+          video_url: string | null
           x: number
           y: number
         }
@@ -38,6 +39,7 @@ export type Database = {
           id?: string
           theme: string
           updated_at?: string
+          video_url?: string | null
           x?: number
           y?: number
         }
@@ -51,6 +53,7 @@ export type Database = {
           id?: string
           theme?: string
           updated_at?: string
+          video_url?: string | null
           x?: number
           y?: number
         }

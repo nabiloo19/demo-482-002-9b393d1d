@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Plus, LogOut, ArrowLeft } from "lucide-react";
+import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ThemeFormData {
@@ -23,8 +23,11 @@ interface ThemeRow {
   color_variant: string;
   banner_url: string | null;
   audio_url: string | null;
+  video_url: string | null;
   created_at: string;
 }
+
+const randomPos = () => Math.floor(15 + Math.random() * 70);
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -35,16 +38,18 @@ const Admin = () => {
   const [authLoading, setAuthLoading] = useState(false);
   const [themes, setThemes] = useState<ThemeRow[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ThemeFormData>({
     theme: "",
     excerpt: "",
     frequency: 10,
-    x: 50,
-    y: 50,
+    x: randomPos(),
+    y: randomPos(),
     color_variant: "cream",
   });
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -103,6 +108,31 @@ const Admin = () => {
     return data.publicUrl;
   };
 
+  const resetForm = () => {
+    setFormData({ theme: "", excerpt: "", frequency: 10, x: randomPos(), y: randomPos(), color_variant: "cream" });
+    setBannerFile(null);
+    setAudioFile(null);
+    setVideoFile(null);
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  const startEdit = (t: ThemeRow) => {
+    setEditingId(t.id);
+    setFormData({
+      theme: t.theme,
+      excerpt: t.excerpt || "",
+      frequency: t.frequency,
+      x: t.x,
+      y: t.y,
+      color_variant: t.color_variant,
+    });
+    setBannerFile(null);
+    setAudioFile(null);
+    setVideoFile(null);
+    setShowForm(true);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.theme.trim()) {
@@ -113,6 +143,7 @@ const Admin = () => {
 
     let banner_url: string | null = null;
     let audio_url: string | null = null;
+    let video_url: string | null = null;
 
     if (bannerFile) {
       banner_url = await uploadFile(bannerFile, "banners");
@@ -122,8 +153,12 @@ const Admin = () => {
       audio_url = await uploadFile(audioFile, "audio");
       if (!audio_url) { setSaving(false); return; }
     }
+    if (videoFile) {
+      video_url = await uploadFile(videoFile, "videos");
+      if (!video_url) { setSaving(false); return; }
+    }
 
-    const insertData: any = {
+    const payload: any = {
       theme: formData.theme.trim(),
       excerpt: formData.excerpt.trim() || null,
       frequency: formData.frequency,
@@ -131,18 +166,22 @@ const Admin = () => {
       y: formData.y,
       color_variant: formData.color_variant,
     };
-    if (banner_url) insertData.banner_url = banner_url;
-    if (audio_url) insertData.audio_url = audio_url;
+    if (banner_url) payload.banner_url = banner_url;
+    if (audio_url) payload.audio_url = audio_url;
+    if (video_url) payload.video_url = video_url;
 
-    const { error } = await supabase.from("themes").insert(insertData);
+    let error;
+    if (editingId) {
+      ({ error } = await supabase.from("themes").update(payload).eq("id", editingId));
+    } else {
+      ({ error } = await supabase.from("themes").insert(payload));
+    }
+
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Theme added!" });
-      setFormData({ theme: "", excerpt: "", frequency: 10, x: 50, y: 50, color_variant: "cream" });
-      setBannerFile(null);
-      setAudioFile(null);
-      setShowForm(false);
+      toast({ title: editingId ? "Theme updated!" : "Theme added!" });
+      resetForm();
       fetchThemes();
     }
     setSaving(false);
@@ -248,13 +287,18 @@ const Admin = () => {
 
         <div className="max-w-3xl mx-auto px-6 py-8">
           {/* Add button */}
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors mb-8"
-          >
-            <Plus size={16} />
-            Add New Theme
-          </button>
+          {!showForm && (
+            <button
+              onClick={() => {
+                resetForm();
+                setShowForm(true);
+              }}
+              className="flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors mb-8"
+            >
+              <Plus size={16} />
+              Add New Theme
+            </button>
+          )}
 
           {/* Form */}
           {showForm && (
@@ -262,6 +306,10 @@ const Admin = () => {
               onSubmit={handleSave}
               className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft mb-8 space-y-5"
             >
+              <h2 className="font-heading text-lg text-foreground">
+                {editingId ? "Edit Theme" : "New Theme"}
+              </h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
@@ -305,49 +353,21 @@ const Admin = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Frequency
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={50}
-                    value={formData.frequency}
-                    onChange={(e) => setFormData({ ...formData, frequency: parseInt(e.target.value) || 1 })}
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                  />
-                </div>
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    X Position (%)
-                  </label>
-                  <input
-                    type="number"
-                    min={5}
-                    max={95}
-                    value={formData.x}
-                    onChange={(e) => setFormData({ ...formData, x: parseInt(e.target.value) || 50 })}
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                  />
-                </div>
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Y Position (%)
-                  </label>
-                  <input
-                    type="number"
-                    min={5}
-                    max={95}
-                    value={formData.y}
-                    onChange={(e) => setFormData({ ...formData, y: parseInt(e.target.value) || 50 })}
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                  />
-                </div>
+              <div>
+                <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
+                  Frequency (bubble size)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={formData.frequency}
+                  onChange={(e) => setFormData({ ...formData, frequency: parseInt(e.target.value) || 1 })}
+                  className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div>
                   <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
                     Banner Image
@@ -378,6 +398,21 @@ const Admin = () => {
                     />
                   </label>
                 </div>
+                <div>
+                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
+                    Video File
+                  </label>
+                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                    <Upload size={16} />
+                    {videoFile ? videoFile.name : "Choose video..."}
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -386,11 +421,11 @@ const Admin = () => {
                   disabled={saving}
                   className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
                 >
-                  {saving ? "Saving..." : "Save Theme"}
+                  {saving ? "Saving..." : editingId ? "Update Theme" : "Save Theme"}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
+                  onClick={resetForm}
                   className="px-6 py-3 bg-secondary text-secondary-foreground font-body text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
                 >
                   Cancel
@@ -447,11 +482,20 @@ const Admin = () => {
                         ♫ Audio
                       </span>
                     )}
-                    <span className="font-body text-[10px] text-muted-foreground/60">
-                      pos: ({t.x}, {t.y})
-                    </span>
+                    {t.video_url && (
+                      <span className="font-body text-[10px] uppercase tracking-wider text-accent">
+                        ▶ Video
+                      </span>
+                    )}
                   </div>
                 </div>
+                <button
+                  onClick={() => startEdit(t)}
+                  className="p-2 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                  aria-label="Edit theme"
+                >
+                  <Pencil size={16} />
+                </button>
                 <button
                   onClick={() => handleDelete(t.id)}
                   className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"

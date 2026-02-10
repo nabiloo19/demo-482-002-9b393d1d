@@ -84,17 +84,18 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
       </button>
 
       {/* Waveform */}
-      <div className="flex-1 flex items-center gap-[2px] h-8">
+      <div className="flex-1 flex items-end gap-[2px] h-8">
         {bars.map((height, i) => {
-          const isPlayed = (i / bars.length) * 100 <= progress;
+          const barProgress = (i / bars.length) * 100;
+          const isPlayed = barProgress <= progress;
           return (
             <div
               key={i}
               role="button"
               tabIndex={-1}
               onClick={() => handleBarClick(i)}
-              className={`flex-1 rounded-full transition-colors duration-200 cursor-pointer min-w-[2px] ${
-                isPlayed ? "bg-foreground/60" : "bg-foreground/18"
+              className={`flex-1 rounded-full cursor-pointer min-w-[2px] transition-all duration-150 ${
+                isPlayed ? "bg-foreground/70" : "bg-foreground/15"
               }`}
               style={{ height: `${height * 100}%` }}
             />

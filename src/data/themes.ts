@@ -8,6 +8,7 @@ export interface ThemeBubble {
   excerpt?: string;
   bannerUrl?: string;
   audioUrl?: string;
+  videoUrl?: string;
 }
 
 export const themes: ThemeBubble[] = [
