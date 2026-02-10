@@ -249,14 +249,6 @@ const Admin = () => {
             >
               {authLoading ? "Signing in..." : "Sign In"}
             </button>
-            <button
-              type="button"
-              onClick={handleSignup}
-              disabled={authLoading}
-              className="w-full px-5 py-3 bg-secondary text-secondary-foreground font-body text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors disabled:opacity-50"
-            >
-              Create Account
-            </button>
           </form>
         </div>
       </div>
