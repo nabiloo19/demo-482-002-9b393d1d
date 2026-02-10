@@ -10,46 +10,49 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   // Generate static waveform bar heights
   const bars = useMemo(() => {
     return Array.from({ length: 48 }, () => 0.15 + Math.random() * 0.85);
   }, []);
 
+  // Reset state when src changes
+  useEffect(() => {
+    setIsPlaying(false);
+    setProgress(0);
+    setCurrentTime(0);
+    setDuration(0);
+  }, [src]);
+
   const togglePlay = useCallback(() => {
-    if (!audioRef.current || !src) return;
+    const audio = audioRef.current;
+    if (!audio || !src) return;
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
     } else {
-      audioRef.current.play();
+      audio.play();
     }
     setIsPlaying(!isPlaying);
   }, [isPlaying, src]);
 
-  useEffect(() => {
+  const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !audio.duration) return;
+    setCurrentTime(audio.currentTime);
+    setProgress((audio.currentTime / audio.duration) * 100);
+  }, []);
 
-    const onTimeUpdate = () => {
-      const p = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-      setCurrentTime(audio.currentTime);
-      setProgress(p);
-    };
+  const handleLoadedMetadata = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) setDuration(audio.duration);
+  }, []);
 
-    const onEnded = () => {
-      setIsPlaying(false);
-      setProgress(0);
-      setCurrentTime(0);
-    };
-
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("ended", onEnded);
-
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("ended", onEnded);
-    };
-  }, [src]);
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    setProgress(0);
+    setCurrentTime(0);
+  }, []);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -58,15 +61,26 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
   };
 
   const handleBarClick = (index: number) => {
-    if (!audioRef.current || !src || !audioRef.current.duration) return;
-    const newTime = (index / bars.length) * audioRef.current.duration;
-    audioRef.current.currentTime = newTime;
+    const audio = audioRef.current;
+    if (!audio || !src || !audio.duration) return;
+    const newTime = (index / bars.length) * audio.duration;
+    audio.currentTime = newTime;
     setCurrentTime(newTime);
+    setProgress((newTime / audio.duration) * 100);
   };
 
   return (
     <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-soft">
-      {src && <audio ref={audioRef} src={src} preload="metadata" />}
+      {src && (
+        <audio
+          ref={audioRef}
+          src={src}
+          preload="metadata"
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+          onEnded={handleEnded}
+        />
+      )}
 
       {/* Play / Pause */}
       <button
@@ -85,15 +99,15 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
       {/* Waveform */}
       <div className="flex-1 flex items-end gap-[2px] h-8">
         {bars.map((height, i) => {
-          const barProgress = (i / bars.length) * 100;
-          const isPlayed = barProgress <= progress;
+          const barPosition = ((i + 0.5) / bars.length) * 100;
+          const isPlayed = barPosition <= progress;
           return (
             <div
               key={i}
               role="button"
               tabIndex={-1}
               onClick={() => handleBarClick(i)}
-              className={`flex-1 rounded-full cursor-pointer min-w-[2px] transition-all duration-150 ${
+              className={`flex-1 rounded-full cursor-pointer min-w-[2px] transition-colors duration-100 ${
                 isPlayed ? "bg-foreground/70" : "bg-foreground/15"
               }`}
               style={{ height: `${height * 100}%` }}
