@@ -31,10 +31,9 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
     if (!audio) return;
 
     const onTimeUpdate = () => {
+      const p = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
       setCurrentTime(audio.currentTime);
-      setProgress(
-        audio.duration ? (audio.currentTime / audio.duration) * 100 : 0
-      );
+      setProgress(p);
     };
 
     const onEnded = () => {
@@ -50,7 +49,7 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("ended", onEnded);
     };
-  }, []);
+  }, [src]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
