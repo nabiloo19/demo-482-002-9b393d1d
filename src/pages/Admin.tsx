@@ -353,20 +353,6 @@ const Admin = () => {
                 />
               </div>
 
-              <div>
-                <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                  Frequency (bubble size)
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  max={50}
-                  value={formData.frequency}
-                  onChange={(e) => setFormData({ ...formData, frequency: parseInt(e.target.value) || 1 })}
-                  className="w-full max-w-[120px] px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                />
-              </div>
-
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div>
                   <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
