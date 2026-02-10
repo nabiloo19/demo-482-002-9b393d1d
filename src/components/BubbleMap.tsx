@@ -15,6 +15,7 @@ interface DbTheme {
   color_variant: string;
   banner_url: string | null;
   audio_url: string | null;
+  video_url: string | null;
 }
 
 const BubbleMap = () => {
@@ -47,6 +48,7 @@ const BubbleMap = () => {
         excerpt: t.excerpt || undefined,
         bannerUrl: t.banner_url || undefined,
         audioUrl: t.audio_url || undefined,
+        videoUrl: t.video_url || undefined,
       }));
     }
     return staticThemes;

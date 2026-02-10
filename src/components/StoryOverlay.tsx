@@ -34,46 +34,55 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
             transition={{ type: "spring", damping: 26, stiffness: 300 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="relative w-full max-w-lg bg-card/90 backdrop-blur-xl rounded-2xl shadow-overlay overflow-hidden pointer-events-auto">
+            <div className="relative w-full max-w-2xl bg-card/90 backdrop-blur-xl rounded-2xl shadow-overlay overflow-hidden pointer-events-auto max-h-[90vh] overflow-y-auto">
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-10 p-1.5 text-foreground/60 hover:text-foreground transition-colors"
+                className="absolute top-4 right-4 z-10 p-1.5 text-foreground/60 hover:text-foreground transition-colors bg-card/60 backdrop-blur-sm rounded-full"
                 aria-label="Close story"
               >
                 <X size={20} strokeWidth={1.5} />
               </button>
 
               {/* Theme heading */}
-              <div className="text-center pt-7 pb-4 px-6">
+              <div className="text-center pt-8 pb-5 px-8">
                 <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
                   Theme
                 </p>
-                <h2 className="font-heading text-2xl md:text-3xl text-foreground font-medium">
+                <h2 className="font-heading text-3xl md:text-4xl text-foreground font-medium">
                   {theme.theme}
                 </h2>
               </div>
 
-              {/* Banner / Video area */}
-              <div className="mx-5 rounded-xl overflow-hidden aspect-video">
-                <img
-                  src={bannerSrc}
-                  alt={theme.theme}
-                  className="w-full h-full object-cover"
-                />
+              {/* Video or Banner */}
+              <div className="mx-6 rounded-xl overflow-hidden aspect-video">
+                {theme.videoUrl ? (
+                  <video
+                    src={theme.videoUrl}
+                    controls
+                    className="w-full h-full object-cover"
+                    poster={bannerSrc}
+                  />
+                ) : (
+                  <img
+                    src={bannerSrc}
+                    alt={theme.theme}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
 
               {/* Excerpt */}
               {theme.excerpt && (
-                <div className="px-6 pt-4">
-                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                <div className="px-8 pt-5">
+                  <p className="font-body text-base text-muted-foreground leading-relaxed">
                     {theme.excerpt}
                   </p>
                 </div>
               )}
 
               {/* Audio Player */}
-              <div className="p-5">
+              <div className="p-6">
                 <AudioPlayer src={theme.audioUrl} />
               </div>
             </div>
