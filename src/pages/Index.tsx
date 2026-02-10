@@ -32,7 +32,15 @@ const Index = () => {
       <Header />
 
       {/* Hero / Archive section */}
-      <section id="archive" className="bg-gradient-warm">
+      <section id="archive" className="relative bg-gradient-warm py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="font-heading text-3xl md:text-4xl text-foreground text-center mb-2">
+            The Archive
+          </h2>
+          <p className="font-body text-muted-foreground text-center max-w-xl mx-auto mb-8">
+            Explore the most common themes shared by Yemenis in exile. Click a bubble to hear their stories.
+          </p>
+        </div>
         <BubbleMap />
       </section>
 
