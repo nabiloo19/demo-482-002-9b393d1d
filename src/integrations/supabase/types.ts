@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      themes: {
+        Row: {
+          audio_url: string | null
+          banner_url: string | null
+          color_variant: string
+          created_at: string
+          excerpt: string | null
+          frequency: number
+          id: string
+          theme: string
+          updated_at: string
+          x: number
+          y: number
+        }
+        Insert: {
+          audio_url?: string | null
+          banner_url?: string | null
+          color_variant?: string
+          created_at?: string
+          excerpt?: string | null
+          frequency?: number
+          id?: string
+          theme: string
+          updated_at?: string
+          x?: number
+          y?: number
+        }
+        Update: {
+          audio_url?: string | null
+          banner_url?: string | null
+          color_variant?: string
+          created_at?: string
+          excerpt?: string | null
+          frequency?: number
+          id?: string
+          theme?: string
+          updated_at?: string
+          x?: number
+          y?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

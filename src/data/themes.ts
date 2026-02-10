@@ -6,10 +6,11 @@ export interface ThemeBubble {
   y: number;
   colorVariant: "blush" | "cream" | "sand";
   excerpt?: string;
+  bannerUrl?: string;
+  audioUrl?: string;
 }
 
 export const themes: ThemeBubble[] = [
-  // Primary themed bubbles
   {
     id: "family",
     theme: "Family",
@@ -140,7 +141,7 @@ export const themes: ThemeBubble[] = [
     excerpt:
       "The words of elders, passed down through generations. Warnings, wisdom, and whispers of a world we must not forget.",
   },
-  // Small decorative bubbles (no text, not clickable)
+  // Small decorative bubbles
   { id: "dec1", theme: "", frequency: 5, x: 17, y: 35, colorVariant: "blush" },
   { id: "dec2", theme: "", frequency: 4, x: 35, y: 20, colorVariant: "sand" },
   { id: "dec3", theme: "", frequency: 3, x: 63, y: 14, colorVariant: "blush" },

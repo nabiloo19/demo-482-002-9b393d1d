@@ -7,18 +7,27 @@ interface SlideMenuProps {
 }
 
 const navLinks = [
-  { label: "The Archive", href: "#archive" },
-  { label: "About the Project", href: "#about" },
-  { label: "Contact", href: "#contact" },
-  { label: "Participate", href: "#participate" },
+  { label: "The Archive", id: "archive" },
+  { label: "About the Project", id: "about" },
+  { label: "Contact", id: "contact" },
+  { label: "Participate", id: "participate" },
 ];
 
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+};
+
 const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
+  const handleNavClick = (id: string) => {
+    onClose();
+    setTimeout(() => scrollToSection(id), 300);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -27,7 +36,6 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
             className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm"
             onClick={onClose}
           />
-          {/* Panel */}
           <motion.nav
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -50,22 +58,24 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
 
             <div className="flex flex-col gap-1 px-10 py-4">
               {navLinks.map((link, i) => (
-                <motion.a
+                <motion.button
                   key={link.label}
-                  href={link.href}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.07 }}
-                  onClick={onClose}
-                  className="font-heading text-2xl md:text-3xl text-foreground/80 hover:text-foreground transition-colors py-4 border-b border-border/30"
+                  onClick={() => handleNavClick(link.id)}
+                  className="font-heading text-2xl md:text-3xl text-foreground/80 hover:text-foreground transition-colors py-4 border-b border-border/30 text-left"
                 >
                   {link.label}
-                </motion.a>
+                </motion.button>
               ))}
             </div>
 
             <div className="mt-auto px-10 py-8">
-              <button className="w-full px-5 py-3.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-md hover:bg-primary/90 transition-colors">
+              <button
+                onClick={() => handleNavClick("participate")}
+                className="w-full px-5 py-3.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+              >
                 Share Your Story
               </button>
               <p className="mt-4 font-body text-xs text-muted-foreground text-center leading-relaxed">
