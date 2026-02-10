@@ -10,9 +10,11 @@ interface StoryOverlayProps {
 }
 
 const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
+  const bannerSrc = theme?.bannerUrl || storyPlaceholder;
+
   return (
     <AnimatePresence>
-      {theme && theme.excerpt && (
+      {theme && theme.theme && (
         <>
           {/* Backdrop */}
           <motion.div
@@ -55,22 +57,24 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
               {/* Banner / Video area */}
               <div className="mx-5 rounded-xl overflow-hidden aspect-video">
                 <img
-                  src={storyPlaceholder}
+                  src={bannerSrc}
                   alt={theme.theme}
                   className="w-full h-full object-cover"
                 />
               </div>
 
               {/* Excerpt */}
-              <div className="px-6 pt-4">
-                <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                  {theme.excerpt}
-                </p>
-              </div>
+              {theme.excerpt && (
+                <div className="px-6 pt-4">
+                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                    {theme.excerpt}
+                  </p>
+                </div>
+              )}
 
               {/* Audio Player */}
               <div className="p-5">
-                <AudioPlayer />
+                <AudioPlayer src={theme.audioUrl} />
               </div>
             </div>
           </motion.div>

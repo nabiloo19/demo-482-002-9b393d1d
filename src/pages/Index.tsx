@@ -1,14 +1,18 @@
 import Header from "@/components/Header";
 import BubbleMap from "@/components/BubbleMap";
+import AboutSection from "@/components/AboutSection";
+import ContactSection from "@/components/ContactSection";
+import ParticipateSection from "@/components/ParticipateSection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <main className="relative min-h-screen bg-gradient-warm overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden">
       {/* Analog grain texture */}
       <div className="grain-overlay" />
 
-      {/* Decorative sparkle — bottom right */}
-      <div className="fixed bottom-8 right-8 z-10 opacity-50">
+      {/* Decorative sparkle — bottom right of hero */}
+      <div className="absolute bottom-8 right-8 z-10 opacity-50" style={{ top: "calc(100vh - 60px)" }}>
         <svg
           width="36"
           height="36"
@@ -27,9 +31,22 @@ const Index = () => {
 
       <Header />
 
-      <section aria-label="Story themes" className="relative z-10">
+      {/* Hero / Archive section */}
+      <section id="archive" className="bg-gradient-warm">
         <BubbleMap />
       </section>
+
+      {/* About */}
+      <AboutSection />
+
+      {/* Contact */}
+      <ContactSection />
+
+      {/* Participate */}
+      <ParticipateSection />
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 };
