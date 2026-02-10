@@ -60,8 +60,8 @@ const BubbleMap = () => {
   );
 
   const getBubbleSize = (frequency: number) => {
-    const minSize = isMobile ? 16 : 28;
-    const maxSize = isMobile ? 105 : 200;
+    const minSize = isMobile ? 12 : 28;
+    const maxSize = isMobile ? 70 : 180;
     return minSize + (frequency / maxFrequency) * (maxSize - minSize);
   };
 
@@ -76,7 +76,7 @@ const BubbleMap = () => {
 
   return (
     <>
-      <div className="relative w-full aspect-square md:aspect-[16/9] max-h-[70vh]">
+      <div className="relative w-full h-[75vh] sm:h-[65vh] md:h-[70vh]">
         <div className="absolute inset-0">
           {themes.map((bubble, index) => {
             const size = getBubbleSize(bubble.frequency);
