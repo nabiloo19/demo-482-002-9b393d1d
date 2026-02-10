@@ -28,6 +28,7 @@ interface ThemeRow {
 }
 
 const randomPos = () => Math.floor(15 + Math.random() * 70);
+const randomColor = () => (["cream", "blush", "sand"] as const)[Math.floor(Math.random() * 3)];
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const Admin = () => {
     frequency: 10,
     x: randomPos(),
     y: randomPos(),
-    color_variant: "cream",
+    color_variant: randomColor(),
   });
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -109,7 +110,7 @@ const Admin = () => {
   };
 
   const resetForm = () => {
-    setFormData({ theme: "", excerpt: "", frequency: 10, x: randomPos(), y: randomPos(), color_variant: "cream" });
+    setFormData({ theme: "", excerpt: "", frequency: 10, x: randomPos(), y: randomPos(), color_variant: randomColor() });
     setBannerFile(null);
     setAudioFile(null);
     setVideoFile(null);
@@ -187,6 +188,8 @@ const Admin = () => {
     setSaving(false);
   };
 
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("themes").delete().eq("id", id);
     if (error) {
@@ -194,6 +197,7 @@ const Admin = () => {
     } else {
       fetchThemes();
     }
+    setDeleteConfirmId(null);
   };
 
   if (loading) {
@@ -482,13 +486,30 @@ const Admin = () => {
                 >
                   <Pencil size={16} />
                 </button>
-                <button
-                  onClick={() => handleDelete(t.id)}
-                  className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-                  aria-label="Delete theme"
-                >
-                  <Trash2 size={16} />
-                </button>
+                {deleteConfirmId === t.id ? (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                      onClick={() => handleDelete(t.id)}
+                      className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors"
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      onClick={() => setDeleteConfirmId(null)}
+                      className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setDeleteConfirmId(t.id)}
+                    className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                    aria-label="Delete theme"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
               </div>
             ))}
           </div>
