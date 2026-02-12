@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { type ThemeBubble } from "@/data/themes";
 import AudioPlayer from "./AudioPlayer";
-import storyPlaceholder from "@/assets/story-placeholder.jpg";
 
 interface StoryOverlayProps {
   theme: ThemeBubble | null;
@@ -10,7 +9,6 @@ interface StoryOverlayProps {
 }
 
 const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
-  const bannerSrc = theme?.bannerUrl || storyPlaceholder;
 
   return (
     <AnimatePresence>
@@ -54,23 +52,28 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                 </h2>
               </div>
 
-              {/* Video or Banner */}
-              <div className="mx-6 rounded-xl overflow-hidden aspect-video">
-                {theme.videoUrl ? (
+              {/* Banner Image */}
+              {theme.bannerUrl && (
+                <div className="mx-6 rounded-xl overflow-hidden aspect-video">
+                  <img
+                    src={theme.bannerUrl}
+                    alt={theme.theme}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Video */}
+              {theme.videoUrl && (
+                <div className={`mx-6 rounded-xl overflow-hidden aspect-video ${theme.bannerUrl ? 'mt-4' : ''}`}>
                   <video
                     src={theme.videoUrl}
                     controls
                     className="w-full h-full object-cover"
-                    poster={bannerSrc}
+                    poster={theme.bannerUrl || undefined}
                   />
-                ) : (
-                  <img
-                    src={bannerSrc}
-                    alt={theme.theme}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Excerpt */}
               {theme.excerpt && (
@@ -82,9 +85,11 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
               )}
 
               {/* Audio Player */}
-              <div className="p-6">
-                <AudioPlayer src={theme.audioUrl} />
-              </div>
+              {theme.audioUrl && (
+                <div className="p-6">
+                  <AudioPlayer src={theme.audioUrl} />
+                </div>
+              )}
             </div>
           </motion.div>
         </>
