@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil } from "lucide-react";
+import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ThemeFormData {
@@ -52,6 +52,9 @@ const Admin = () => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
+  const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
+  const [deleteSubmissionId, setDeleteSubmissionId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -65,8 +68,25 @@ const Admin = () => {
   }, []);
 
   useEffect(() => {
-    if (session) fetchThemes();
+    if (session) {
+      fetchThemes();
+      fetchSubmissions();
+    }
   }, [session]);
+
+  const fetchSubmissions = async () => {
+    const { data, error } = await supabase
+      .from("submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error && data) setSubmissions(data);
+  };
+
+  const handleDeleteSubmission = async (id: string) => {
+    const { error } = await supabase.from("submissions").delete().eq("id", id);
+    if (!error) fetchSubmissions();
+    setDeleteSubmissionId(null);
+  };
 
   const fetchThemes = async () => {
     const { data, error } = await supabase
@@ -270,7 +290,7 @@ const Admin = () => {
               <ArrowLeft size={16} /> Home
             </button>
             <h1 className="font-heading text-xl text-foreground">
-              Theme Manager
+              Admin
             </h1>
           </div>
           <button
@@ -282,6 +302,29 @@ const Admin = () => {
         </div>
 
         <div className="max-w-3xl mx-auto px-6 py-8">
+          {/* Tabs */}
+          <div className="flex gap-1 mb-8 bg-card/60 rounded-lg p-1 w-fit">
+            <button
+              onClick={() => setActiveTab("themes")}
+              className={`px-4 py-2 rounded-md font-body text-sm transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Themes
+            </button>
+            <button
+              onClick={() => setActiveTab("submissions")}
+              className={`px-4 py-2 rounded-md font-body text-sm transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <Mail size={14} />
+              Submissions
+              {submissions.length > 0 && (
+                <span className="bg-accent/20 text-accent text-[10px] font-medium px-1.5 py-0.5 rounded-full">
+                  {submissions.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {activeTab === "themes" && <>
           {/* Add button */}
           {!showForm && (
             <button
@@ -505,6 +548,62 @@ const Admin = () => {
               </div>
             ))}
           </div>
+          </>}
+
+          {activeTab === "submissions" && (
+            <div className="space-y-3">
+              {submissions.length === 0 && (
+                <p className="font-body text-sm text-muted-foreground text-center py-12">
+                  No submissions yet.
+                </p>
+              )}
+              {submissions.map((s) => (
+                <div
+                  key={s.id}
+                  className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-soft space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="font-heading text-base text-foreground">{s.name}</h3>
+                        <span className="font-body text-xs text-muted-foreground">{s.email}</span>
+                      </div>
+                      <p className="font-body text-sm text-muted-foreground/80 mt-2 whitespace-pre-wrap leading-relaxed">
+                        {s.message}
+                      </p>
+                      <p className="font-body text-[10px] text-muted-foreground/50 mt-2 uppercase tracking-wider">
+                        {new Date(s.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                    {deleteSubmissionId === s.id ? (
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <button
+                          onClick={() => handleDeleteSubmission(s.id)}
+                          className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={() => setDeleteSubmissionId(null)}
+                          className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteSubmissionId(s.id)}
+                        className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                        aria-label="Delete submission"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
