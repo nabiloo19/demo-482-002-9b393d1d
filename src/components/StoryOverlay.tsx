@@ -42,54 +42,53 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                 <X size={20} strokeWidth={1.5} />
               </button>
 
-              {/* Theme heading */}
-              <div className="text-center pt-8 pb-5 px-8">
-                <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
-                  Theme
-                </p>
-                <h2 className="font-heading text-3xl md:text-4xl text-foreground font-medium">
-                  {theme.theme}
-                </h2>
-              </div>
-
-              {/* Banner Image */}
-              {theme.bannerUrl && (
-                <div className="mx-6 rounded-xl overflow-hidden aspect-video">
-                  <img
-                    src={theme.bannerUrl}
-                    alt={theme.theme}
-                    className="w-full h-full object-cover"
-                  />
+              {/* Content wrapper with consistent spacing */}
+              <div className="flex flex-col gap-5 px-6 md:px-8 pt-8 pb-8">
+                {/* Theme heading */}
+                <div className="text-center">
+                  <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
+                    Theme
+                  </p>
+                  <h2 className="font-heading text-3xl md:text-4xl text-foreground font-medium">
+                    {theme.theme}
+                  </h2>
                 </div>
-              )}
 
-              {/* Video */}
-              {theme.videoUrl && (
-                <div className={`mx-6 rounded-xl overflow-hidden aspect-video ${theme.bannerUrl ? 'mt-4' : ''}`}>
-                  <video
-                    src={theme.videoUrl}
-                    controls
-                    className="w-full h-full object-cover"
-                    poster={theme.bannerUrl || undefined}
-                  />
-                </div>
-              )}
+                {/* Banner Image */}
+                {theme.bannerUrl && (
+                  <div className="rounded-xl overflow-hidden aspect-video">
+                    <img
+                      src={theme.bannerUrl}
+                      alt={theme.theme}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
 
-              {/* Excerpt */}
-              {theme.excerpt && (
-                <div className="px-8 pt-5">
+                {/* Video */}
+                {theme.videoUrl && (
+                  <div className="rounded-xl overflow-hidden aspect-video">
+                    <video
+                      src={theme.videoUrl}
+                      controls
+                      className="w-full h-full object-cover"
+                      poster={theme.bannerUrl || undefined}
+                    />
+                  </div>
+                )}
+
+                {/* Excerpt */}
+                {theme.excerpt && (
                   <p className="font-body text-base text-muted-foreground leading-relaxed">
                     {theme.excerpt}
                   </p>
-                </div>
-              )}
+                )}
 
-              {/* Audio Player */}
-              {theme.audioUrl && (
-                <div className="p-6">
+                {/* Audio Player */}
+                {theme.audioUrl && (
                   <AudioPlayer src={theme.audioUrl} />
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </motion.div>
         </>
