@@ -25,14 +25,14 @@ interface DbTheme {
 
 /** Scattered positions: bubbles sit on left/right edges during the About section */
 const SCATTERED: { x: number; y: number }[] = [
-  { x: 8, y: 14 }, { x: 89, y: 12 }, { x: 6, y: 30 }, { x: 92, y: 26 },
-  { x: 9, y: 46 }, { x: 88, y: 44 }, { x: 13, y: 62 }, { x: 85, y: 60 },
-  { x: 7, y: 76 }, { x: 90, y: 78 }, { x: 15, y: 22 }, { x: 82, y: 72 },
-  { x: 10, y: 86 },
+  { x: 14, y: 14 }, { x: 84, y: 12 }, { x: 12, y: 30 }, { x: 86, y: 26 },
+  { x: 15, y: 46 }, { x: 83, y: 44 }, { x: 18, y: 62 }, { x: 80, y: 60 },
+  { x: 13, y: 76 }, { x: 85, y: 78 }, { x: 20, y: 22 }, { x: 78, y: 72 },
+  { x: 16, y: 86 },
   // small decorative
-  { x: 4, y: 18 }, { x: 94, y: 20 }, { x: 5, y: 52 }, { x: 93, y: 50 },
-  { x: 14, y: 70 }, { x: 87, y: 36 }, { x: 11, y: 40 }, { x: 84, y: 84 },
-  { x: 16, y: 56 }, { x: 91, y: 66 }, { x: 3, y: 82 }, { x: 95, y: 10 },
+  { x: 10, y: 18 }, { x: 88, y: 20 }, { x: 11, y: 52 }, { x: 87, y: 50 },
+  { x: 19, y: 70 }, { x: 82, y: 36 }, { x: 16, y: 40 }, { x: 79, y: 84 },
+  { x: 21, y: 56 }, { x: 85, y: 66 }, { x: 10, y: 82 }, { x: 88, y: 14 },
 ];
 
 const easeInOutQuad = (t: number) =>
