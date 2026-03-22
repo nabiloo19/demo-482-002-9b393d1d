@@ -4,7 +4,7 @@ export interface ThemeBubble {
   frequency: number;
   x: number;
   y: number;
-  colorVariant: "blush" | "cream" | "sand";
+  colorVariant: "amber" | "rose" | "gold";
   excerpt?: string;
   bannerUrl?: string;
   audioUrl?: string;
@@ -18,7 +18,7 @@ export const themes: ThemeBubble[] = [
     frequency: 45,
     x: 48,
     y: 45,
-    colorVariant: "cream",
+    colorVariant: "amber",
     excerpt:
       "The bonds that held us together across continents and time zones. Stories of mothers who packed entire kitchens into suitcases, and fathers who carried their homeland in lullabies.",
   },
@@ -28,7 +28,7 @@ export const themes: ThemeBubble[] = [
     frequency: 28,
     x: 31,
     y: 30,
-    colorVariant: "blush",
+    colorVariant: "rose",
     excerpt:
       "The scent of bakhoor on a Thursday evening. The sound of the adhan echoing through narrow alleyways. Memories that travel with you, no matter how far you go.",
   },
@@ -38,7 +38,7 @@ export const themes: ThemeBubble[] = [
     frequency: 26,
     x: 70,
     y: 36,
-    colorVariant: "sand",
+    colorVariant: "gold",
     excerpt:
       "How we rebuilt our lives, one small act at a time. The strength found in community, in shared meals, and in the quiet determination to keep going.",
   },
@@ -48,7 +48,7 @@ export const themes: ThemeBubble[] = [
     frequency: 24,
     x: 62,
     y: 64,
-    colorVariant: "cream",
+    colorVariant: "amber",
     excerpt:
       "The houses we left behind, the streets we walked as children. Places that exist now only in our memories and in the stories we tell our children.",
   },
@@ -58,7 +58,7 @@ export const themes: ThemeBubble[] = [
     frequency: 19,
     x: 78,
     y: 52,
-    colorVariant: "sand",
+    colorVariant: "gold",
     excerpt:
       "Ancient trade routes, medieval architecture, and a civilization that gave the world coffee. Our history is our identity.",
   },
@@ -68,7 +68,7 @@ export const themes: ThemeBubble[] = [
     frequency: 18,
     x: 24,
     y: 53,
-    colorVariant: "blush",
+    colorVariant: "rose",
     excerpt:
       "The last look through an airplane window. The moment the familiar became foreign, and the foreign became our new reality.",
   },
@@ -78,7 +78,7 @@ export const themes: ThemeBubble[] = [
     frequency: 17,
     x: 22,
     y: 40,
-    colorVariant: "blush",
+    colorVariant: "rose",
     excerpt:
       "Fragments of a life left behind. The taste of honey-soaked bint al-sahn, the warmth of a grandmother's embrace.",
   },
@@ -88,7 +88,7 @@ export const themes: ThemeBubble[] = [
     frequency: 16,
     x: 40,
     y: 62,
-    colorVariant: "sand",
+    colorVariant: "gold",
     excerpt:
       "Qahwa Yemeniya — more than a drink, it's a ceremony. The grinding, the brewing, the sharing. A ritual that anchors us to home.",
   },
@@ -98,7 +98,7 @@ export const themes: ThemeBubble[] = [
     frequency: 16,
     x: 38,
     y: 56,
-    colorVariant: "cream",
+    colorVariant: "amber",
     excerpt:
       "In every setback, a new beginning. The Yemeni spirit of perseverance, woven into every story of exile.",
   },
@@ -108,7 +108,7 @@ export const themes: ThemeBubble[] = [
     frequency: 17,
     x: 52,
     y: 72,
-    colorVariant: "blush",
+    colorVariant: "rose",
     excerpt:
       "The quiet courage of starting over. Learning new languages, navigating new customs, while holding on to who we are.",
   },
@@ -118,7 +118,7 @@ export const themes: ThemeBubble[] = [
     frequency: 13,
     x: 82,
     y: 56,
-    colorVariant: "blush",
+    colorVariant: "rose",
     excerpt:
       "Running through dusty streets, the laughter echoing off stone walls. Games played under open skies, where imagination was our only limit.",
   },
@@ -128,7 +128,7 @@ export const themes: ThemeBubble[] = [
     frequency: 12,
     x: 84,
     y: 37,
-    colorVariant: "cream",
+    colorVariant: "amber",
     excerpt:
       "Across borders and time zones, the threads of family remain unbroken. Video calls that replace dinner tables.",
   },
@@ -138,21 +138,21 @@ export const themes: ThemeBubble[] = [
     frequency: 10,
     x: 58,
     y: 22,
-    colorVariant: "cream",
+    colorVariant: "amber",
     excerpt:
       "The words of elders, passed down through generations. Warnings, wisdom, and whispers of a world we must not forget.",
   },
   // Small decorative bubbles
-  { id: "dec1", theme: "", frequency: 5, x: 17, y: 35, colorVariant: "blush" },
-  { id: "dec2", theme: "", frequency: 4, x: 35, y: 20, colorVariant: "sand" },
-  { id: "dec3", theme: "", frequency: 3, x: 63, y: 14, colorVariant: "blush" },
-  { id: "dec4", theme: "", frequency: 5, x: 14, y: 57, colorVariant: "sand" },
-  { id: "dec5", theme: "", frequency: 3, x: 45, y: 80, colorVariant: "cream" },
-  { id: "dec6", theme: "", frequency: 3, x: 90, y: 44, colorVariant: "cream" },
-  { id: "dec7", theme: "", frequency: 4, x: 76, y: 67, colorVariant: "sand" },
-  { id: "dec8", theme: "", frequency: 2, x: 27, y: 68, colorVariant: "blush" },
-  { id: "dec9", theme: "", frequency: 3, x: 72, y: 22, colorVariant: "sand" },
-  { id: "dec10", theme: "", frequency: 4, x: 88, y: 60, colorVariant: "cream" },
-  { id: "dec11", theme: "", frequency: 3, x: 38, y: 36, colorVariant: "cream" },
-  { id: "dec12", theme: "", frequency: 2, x: 68, y: 48, colorVariant: "blush" },
+  { id: "dec1", theme: "", frequency: 5, x: 17, y: 35, colorVariant: "rose" },
+  { id: "dec2", theme: "", frequency: 4, x: 35, y: 20, colorVariant: "gold" },
+  { id: "dec3", theme: "", frequency: 3, x: 63, y: 14, colorVariant: "rose" },
+  { id: "dec4", theme: "", frequency: 5, x: 14, y: 57, colorVariant: "gold" },
+  { id: "dec5", theme: "", frequency: 3, x: 45, y: 80, colorVariant: "amber" },
+  { id: "dec6", theme: "", frequency: 3, x: 90, y: 44, colorVariant: "amber" },
+  { id: "dec7", theme: "", frequency: 4, x: 76, y: 67, colorVariant: "gold" },
+  { id: "dec8", theme: "", frequency: 2, x: 27, y: 68, colorVariant: "rose" },
+  { id: "dec9", theme: "", frequency: 3, x: 72, y: 22, colorVariant: "gold" },
+  { id: "dec10", theme: "", frequency: 4, x: 88, y: 60, colorVariant: "amber" },
+  { id: "dec11", theme: "", frequency: 3, x: 38, y: 36, colorVariant: "amber" },
+  { id: "dec12", theme: "", frequency: 2, x: 68, y: 48, colorVariant: "rose" },
 ];
