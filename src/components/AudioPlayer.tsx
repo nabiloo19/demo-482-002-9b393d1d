@@ -70,7 +70,7 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
   };
 
   return (
-    <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-soft">
+    <div className="flex items-center gap-3 bg-secondary/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-soft">
       {src && (
         <audio
           ref={audioRef}
