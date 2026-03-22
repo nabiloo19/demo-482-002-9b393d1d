@@ -18,7 +18,7 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-background/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-background/60 backdrop-blur-md"
             onClick={onClose}
           />
 
@@ -29,10 +29,16 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
             transition={{ type: "spring", damping: 26, stiffness: 300 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="relative w-full max-w-2xl bg-card/95 backdrop-blur-xl rounded-2xl shadow-overlay overflow-hidden pointer-events-auto max-h-[90vh] overflow-y-auto">
+            <div
+              className="relative w-full max-w-2xl rounded-2xl shadow-overlay overflow-hidden pointer-events-auto max-h-[90vh] overflow-y-auto border border-border/30"
+              style={{
+                background: "hsl(var(--background) / 0.95)",
+                backdropFilter: "blur(20px)",
+              }}
+            >
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-10 p-1.5 text-card-foreground/60 hover:text-card-foreground transition-colors bg-card/60 backdrop-blur-sm rounded-full"
+                className="absolute top-4 right-4 z-10 p-1.5 text-foreground/60 hover:text-foreground transition-colors rounded-full bg-secondary/60"
                 aria-label="Close story"
               >
                 <X size={20} strokeWidth={1.5} />
@@ -40,10 +46,10 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
 
               <div className="flex flex-col gap-5 px-6 md:px-8 pt-8 pb-8">
                 <div className="text-center">
-                  <p className="font-body text-[10px] uppercase tracking-[0.2em] text-card-foreground/50 mb-1.5">
+                  <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
                     Theme
                   </p>
-                  <h2 className="font-heading text-3xl md:text-4xl text-primary font-medium">
+                  <h2 className="font-heading text-3xl md:text-4xl text-accent font-medium">
                     {theme.theme}
                   </h2>
                 </div>
@@ -70,7 +76,7 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                 )}
 
                 {theme.excerpt && (
-                  <p className="font-body text-base text-card-foreground/70 leading-relaxed">
+                  <p className="font-body text-base text-muted-foreground leading-relaxed">
                     {theme.excerpt}
                   </p>
                 )}

@@ -70,7 +70,7 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
   };
 
   return (
-    <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-soft">
+    <div className="flex items-center gap-3 bg-secondary/80 backdrop-blur-sm rounded-full px-4 py-3 shadow-soft">
       {src && (
         <audio
           ref={audioRef}
@@ -86,7 +86,7 @@ const AudioPlayer = ({ src }: AudioPlayerProps) => {
       <button
         onClick={togglePlay}
         disabled={!src}
-        className="flex-shrink-0 w-10 h-10 rounded-full bg-foreground text-card flex items-center justify-center hover:bg-foreground/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center hover:bg-accent/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
