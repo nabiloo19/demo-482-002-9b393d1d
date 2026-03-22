@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { themes as staticThemes, type ThemeBubble } from "@/data/themes";
 import { useIsMobile } from "@/hooks/use-mobile";
-import StoryOverlay from "./StoryOverlay";
+import StoryOverlay from "@/components/StoryOverlay";
 import Header from "@/components/Header";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
