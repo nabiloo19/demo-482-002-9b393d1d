@@ -20,13 +20,13 @@ const ContactSection = () => {
 
         <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
           <a
-            href="mailto:hello@yemenisinexile.org"
+            href="mailto:yemenisinexile@gmail.com"
             className="flex items-center gap-3 font-body text-foreground hover:text-accent transition-colors group"
           >
             <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-accent/20 transition-colors">
               <Mail size={18} className="text-foreground/70" />
             </div>
-            <span className="text-sm">hello@yemenisinexile.org</span>
+            <span className="text-sm">yemenisinexile@gmail.com</span>
           </a>
           <div className="flex items-center gap-3 font-body text-foreground/70">
             <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
