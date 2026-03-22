@@ -23,7 +23,7 @@ const ContactSection = () => {
             href="mailto:hello@yemenisinexile.org"
             className="flex items-center gap-3 font-body text-foreground hover:text-accent transition-colors group"
           >
-            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-accent/10 transition-colors">
+            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-accent/20 transition-colors">
               <Mail size={18} className="text-foreground/70" />
             </div>
             <span className="text-sm">hello@yemenisinexile.org</span>

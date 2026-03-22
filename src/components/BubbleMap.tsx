@@ -22,7 +22,6 @@ const BubbleMap = () => {
   const [selectedTheme, setSelectedTheme] = useState<ThemeBubble | null>(null);
   const isMobile = useIsMobile();
 
-  // Fetch themes from database
   const { data: dbThemes } = useQuery({
     queryKey: ["themes"],
     queryFn: async () => {
@@ -35,16 +34,15 @@ const BubbleMap = () => {
     },
   });
 
-  // Convert DB themes to ThemeBubble format, fallback to static if DB is empty
   const themes: ThemeBubble[] = useMemo(() => {
     if (dbThemes && dbThemes.length > 0) {
-      return dbThemes.map((t, i) => ({
+      return dbThemes.map((t) => ({
         id: t.id,
         theme: t.theme,
         frequency: t.frequency,
         x: t.x,
         y: t.y,
-        colorVariant: (t.color_variant as "blush" | "cream" | "sand") || "cream",
+        colorVariant: (t.color_variant as "amber" | "rose" | "gold") || "amber",
         excerpt: t.excerpt || undefined,
         bannerUrl: t.banner_url || undefined,
         audioUrl: t.audio_url || undefined,
@@ -60,17 +58,23 @@ const BubbleMap = () => {
   );
 
   const getBubbleSize = (frequency: number) => {
-    const minSize = isMobile ? 12 : 28;
-    const maxSize = isMobile ? 70 : 180;
+    const minSize = isMobile ? 14 : 30;
+    const maxSize = isMobile ? 75 : 185;
     return minSize + (frequency / maxFrequency) * (maxSize - minSize);
   };
 
-  const getColorClass = (variant: string) => {
+  const getGlowClass = (variant: string) => {
     switch (variant) {
-      case "blush": return "bg-bubble-blush";
-      case "cream": return "bg-bubble-cream";
-      case "sand": return "bg-bubble-sand";
-      default: return "bg-bubble-cream";
+      case "rose":
+      case "blush":
+        return "bubble-glow-rose";
+      case "gold":
+      case "sand":
+        return "bubble-glow-gold";
+      case "amber":
+      case "cream":
+      default:
+        return "bubble-glow-amber";
     }
   };
 
@@ -95,8 +99,8 @@ const BubbleMap = () => {
                 <button
                   disabled={!isClickable}
                   onClick={() => isClickable && setSelectedTheme(bubble)}
-                  className={`rounded-full ${getColorClass(bubble.colorVariant)} flex items-center justify-center shadow-sm ${
-                    isClickable ? "cursor-pointer bubble-hover" : "cursor-default opacity-70"
+                  className={`rounded-full ${getGlowClass(bubble.colorVariant)} flex items-center justify-center ${
+                    isClickable ? "cursor-pointer bubble-hover" : "cursor-default opacity-50"
                   }`}
                   style={{
                     width: `${size}px`,
@@ -106,7 +110,7 @@ const BubbleMap = () => {
                 >
                   {bubble.theme && size > 45 && (
                     <span
-                      className={`font-heading text-foreground select-none pointer-events-none leading-tight text-center px-2 ${
+                      className={`font-heading text-foreground select-none pointer-events-none leading-tight text-center px-2 drop-shadow-sm ${
                         size > 150
                           ? "text-xl md:text-2xl"
                           : size > 110

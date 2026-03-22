@@ -7,10 +7,10 @@ interface SlideMenuProps {
 }
 
 const navLinks = [
-  { label: "The Archive", id: "archive" },
   { label: "About the Project", id: "about" },
+  { label: "The Archive", id: "archive" },
+  { label: "Share Your Story", id: "participate" },
   { label: "Contact", id: "contact" },
-  { label: "Participate", id: "participate" },
 ];
 
 const scrollToSection = (id: string) => {
@@ -33,7 +33,7 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-background/40 backdrop-blur-sm"
             onClick={onClose}
           />
           <motion.nav
@@ -41,15 +41,15 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm bg-card/95 backdrop-blur-md flex flex-col"
+            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm bg-card backdrop-blur-md flex flex-col"
             style={{
-              boxShadow: "-20px 0 60px -10px hsl(20, 30%, 15%, 0.15)",
+              boxShadow: "-20px 0 60px -10px hsl(0, 0%, 0%, 0.3)",
             }}
           >
             <div className="flex justify-end p-6">
               <button
                 onClick={onClose}
-                className="p-2 text-foreground/70 hover:text-foreground transition-colors"
+                className="p-2 text-card-foreground/70 hover:text-card-foreground transition-colors"
                 aria-label="Close menu"
               >
                 <X size={24} strokeWidth={1.5} />
@@ -64,7 +64,7 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.07 }}
                   onClick={() => handleNavClick(link.id)}
-                  className="font-heading text-2xl md:text-3xl text-foreground/80 hover:text-foreground transition-colors py-4 border-b border-border/30 text-left"
+                  className="font-heading text-2xl md:text-3xl text-card-foreground/80 hover:text-card-foreground transition-colors py-4 border-b border-sidebar-border/30 text-left"
                 >
                   {link.label}
                 </motion.button>
@@ -78,7 +78,7 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
               >
                 Share Your Story
               </button>
-              <p className="mt-4 font-body text-xs text-muted-foreground text-center leading-relaxed">
+              <p className="mt-4 font-body text-xs text-card-foreground/50 text-center leading-relaxed">
                 Every memory matters.
                 <br />
                 Share yours with the archive.

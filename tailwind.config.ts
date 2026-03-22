@@ -78,9 +78,9 @@ export default {
         blush: "hsl(var(--blush))",
         "warm-brown": "hsl(var(--warm-brown))",
         bubble: {
-          blush: "hsl(var(--bubble-blush))",
-          cream: "hsl(var(--bubble-cream))",
-          sand: "hsl(var(--bubble-sand))",
+          amber: "hsl(var(--bubble-amber))",
+          rose: "hsl(var(--bubble-rose))",
+          gold: "hsl(var(--bubble-gold))",
         },
       },
       borderRadius: {
