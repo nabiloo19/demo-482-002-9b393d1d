@@ -4,23 +4,87 @@
 
 /* 
  * Yemenis in Exile — Design System
- * Deep navy base, golden amber & rose ruby bubbles, cream sidebar
+ * Dark: Deep navy base, golden amber & rose ruby bubbles
+ * Light: Warm cream/sand base, same accent palette
  * Typography: Cormorant Garamond (heading) + DM Sans (body)
- * Aesthetic: Recovered archive with analog grain & atmospheric blur
  */
 
 @layer base {
+  /* ── LIGHT MODE (default) ── */
   :root {
+    --background: 35 30% 92%;
+    --foreground: 230 30% 16%;
+
+    --card: 35 25% 96%;
+    --card-foreground: 230 30% 16%;
+
+    --popover: 35 25% 96%;
+    --popover-foreground: 230 30% 16%;
+
+    --primary: 350 45% 35%;
+    --primary-foreground: 35 30% 95%;
+
+    --secondary: 35 20% 85%;
+    --secondary-foreground: 230 25% 20%;
+
+    --muted: 35 15% 82%;
+    --muted-foreground: 230 15% 40%;
+
+    --accent: 35 80% 50%;
+    --accent-foreground: 230 30% 16%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 15% 78%;
+    --input: 35 15% 78%;
+    --ring: 35 80% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --terracotta: 350 45% 35%;
+    --terracotta-light: 350 38% 50%;
+    --sand: 35 30% 85%;
+    --sand-light: 38 35% 92%;
+    --cream: 35 30% 95%;
+    --blush: 340 30% 55%;
+    --warm-brown: 350 35% 20%;
+
+    --bubble-amber: 35 80% 55%;
+    --bubble-rose: 340 50% 50%;
+    --bubble-gold: 40 75% 60%;
+
+    --shadow-soft: 0 4px 20px -4px hsl(230, 20%, 30%, 0.12);
+    --shadow-bubble: 0 8px 32px -8px hsl(35, 80%, 55%, 0.25);
+    --shadow-overlay: 0 24px 64px -16px hsl(230, 20%, 15%, 0.25);
+
+    --sidebar-background: 35 25% 94%;
+    --sidebar-foreground: 350 40% 25%;
+    --sidebar-primary: 350 45% 35%;
+    --sidebar-primary-foreground: 35 30% 95%;
+    --sidebar-accent: 35 20% 88%;
+    --sidebar-accent-foreground: 350 40% 25%;
+    --sidebar-border: 35 15% 78%;
+    --sidebar-ring: 350 45% 35%;
+
+    /* Overlay card — slightly darker in light mode */
+    --overlay-bg: 35 25% 96%;
+    --overlay-fg: 230 30% 16%;
+  }
+
+  /* ── DARK MODE ── */
+  .dark {
     --background: 230 30% 16%;
     --foreground: 35 30% 90%;
 
-    --card: 35 25% 90%;
-    --card-foreground: 350 40% 25%;
+    --card: 230 25% 20%;
+    --card-foreground: 35 30% 90%;
 
-    --popover: 35 25% 90%;
-    --popover-foreground: 350 40% 25%;
+    --popover: 230 25% 20%;
+    --popover-foreground: 35 30% 90%;
 
-    --primary: 350 45% 35%;
+    --primary: 350 45% 45%;
     --primary-foreground: 35 30% 92%;
 
     --secondary: 230 25% 22%;
@@ -39,26 +103,21 @@
     --input: 230 20% 28%;
     --ring: 35 80% 55%;
 
-    --radius: 0.75rem;
-
-    /* Custom tokens */
-    --terracotta: 350 45% 35%;
-    --terracotta-light: 350 38% 50%;
-    --sand: 35 30% 85%;
-    --sand-light: 38 35% 92%;
-    --cream: 35 30% 92%;
-    --blush: 340 30% 55%;
+    --terracotta: 350 45% 45%;
+    --terracotta-light: 350 38% 55%;
+    --sand: 35 25% 30%;
+    --sand-light: 38 25% 25%;
+    --cream: 35 20% 22%;
+    --blush: 340 30% 45%;
     --warm-brown: 350 35% 20%;
 
-    /* Bubble colors — amber glow & rose glow */
     --bubble-amber: 35 80% 55%;
     --bubble-rose: 340 50% 50%;
     --bubble-gold: 40 75% 60%;
 
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(230, 30%, 5%, 0.3);
+    --shadow-soft: 0 4px 20px -4px hsl(0, 0%, 0%, 0.4);
     --shadow-bubble: 0 8px 32px -8px hsl(35, 80%, 55%, 0.35);
-    --shadow-overlay: 0 24px 64px -16px hsl(0, 0%, 0%, 0.5);
+    --shadow-overlay: 0 24px 64px -16px hsl(0, 0%, 0%, 0.6);
 
     --sidebar-background: 35 25% 90%;
     --sidebar-foreground: 350 40% 25%;
@@ -68,6 +127,9 @@
     --sidebar-accent-foreground: 350 40% 25%;
     --sidebar-border: 35 15% 78%;
     --sidebar-ring: 350 45% 35%;
+
+    --overlay-bg: 230 25% 20%;
+    --overlay-fg: 35 30% 90%;
   }
 }
 
@@ -109,7 +171,7 @@
   }
 }
 
-/* Grain texture overlay — subtle analog film effect */
+/* Grain texture overlay */
 .grain-overlay {
   position: fixed;
   top: 0;
@@ -124,7 +186,6 @@
   background-size: 200px 200px;
 }
 
-/* Float animation for bubbles */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -137,7 +198,7 @@
   }
 }
 
-/* Bubble glow effect */
+/* Bubble glow effects */
 .bubble-glow-amber {
   background: radial-gradient(circle, hsl(35, 80%, 55%) 0%, hsl(35, 70%, 40%) 60%, transparent 100%);
   box-shadow: 0 0 30px 8px hsl(35, 80%, 55%, 0.3), inset 0 0 20px hsl(35, 90%, 70%, 0.15);
@@ -156,7 +217,6 @@
   border: 1.5px solid hsl(40, 55%, 35%, 0.6);
 }
 
-/* Decorative (non-interactive) bubbles for about section */
 .bubble-decorative {
   opacity: 0.25;
   filter: blur(2px);
