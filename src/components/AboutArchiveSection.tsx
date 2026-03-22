@@ -110,14 +110,13 @@ const AboutArchiveSection = () => {
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      // Progress: 0 when About section is in view, 1 when Archive section is fully in view
-      // The container is 3x viewport height (about + transition + archive)
+      // Animation completes in the first 2 viewport-heights of scroll.
+      // The remaining scroll keeps the archive pinned and interactive.
       const scrolled = -rect.top;
-      const totalScroll = containerHeight - viewportHeight;
-      const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+      const animationDistance = viewportHeight * 2;
+      const progress = Math.max(0, Math.min(1, scrolled / animationDistance));
 
       setScrollProgress(progress);
     };
@@ -140,7 +139,7 @@ const AboutArchiveSection = () => {
   return (
     <>
       {/* Tall scroll container spanning About + Archive */}
-      <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
+      <div ref={scrollContainerRef} className="relative" style={{ height: "400vh" }}>
         {/* Sticky viewport — stays pinned while user scrolls through the container */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           {/* About text — fades out as bubbles move */}
