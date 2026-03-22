@@ -222,7 +222,7 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="font-body text-muted-foreground">Loading...</p>
       </div>
     );
