@@ -277,7 +277,7 @@ const Admin = () => {
 
   // Admin dashboard
   return (
-    <div className="min-h-screen bg-gradient-warm">
+    <div className="min-h-screen bg-background">
       <div className="grain-overlay" />
       <div className="relative z-10">
         {/* Header */}
