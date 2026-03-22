@@ -48,7 +48,7 @@ const ParticipateSection = () => {
   return (
     <section
       id="participate"
-      className="relative py-24 md:py-32 px-6 md:px-10 bg-card/60"
+      className="relative py-24 md:py-32 px-6 md:px-10"
     >
       <div className="max-w-2xl mx-auto text-center">
         <p className="font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
@@ -66,9 +66,9 @@ const ParticipateSection = () => {
         </p>
 
         {submitted ? (
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-soft max-w-md mx-auto text-center space-y-4">
+          <div className="bg-secondary/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-soft max-w-md mx-auto text-center space-y-4">
             <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mx-auto">
-              <span className="text-2xl">✓</span>
+              <span className="text-2xl text-accent">✓</span>
             </div>
             <h3 className="font-heading text-xl text-foreground">Thank you!</h3>
             <p className="font-body text-sm text-muted-foreground leading-relaxed">
@@ -84,7 +84,7 @@ const ParticipateSection = () => {
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-soft max-w-md mx-auto text-left space-y-5"
+            className="bg-secondary/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-soft max-w-md mx-auto text-left space-y-5"
           >
             <div>
               <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">

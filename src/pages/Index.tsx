@@ -11,8 +11,8 @@ const Index = () => {
       {/* Analog grain texture */}
       <div className="grain-overlay" />
 
-      {/* Decorative sparkle — bottom right of hero */}
-      <div className="absolute bottom-8 right-8 z-10 opacity-50" style={{ top: "calc(100vh - 60px)" }}>
+      {/* Decorative sparkle — bottom right */}
+      <div className="fixed bottom-8 right-8 z-10 opacity-40">
         <svg
           width="36"
           height="36"
@@ -23,16 +23,19 @@ const Index = () => {
         >
           <path
             d="M18 0L20.5 15.5L36 18L20.5 20.5L18 36L15.5 20.5L0 18L15.5 15.5L18 0Z"
-            fill="hsl(38, 55%, 94%)"
-            fillOpacity="0.7"
+            fill="hsl(35, 30%, 90%)"
+            fillOpacity="0.5"
           />
         </svg>
       </div>
 
       <Header />
 
-      {/* Hero / Archive section */}
-      <section id="archive" className="relative bg-gradient-warm py-16 md:py-24">
+      {/* 1. About the Project — with decorative bubbles around it */}
+      <AboutSection />
+
+      {/* 2. The Archive — interactive bubble map */}
+      <section id="archive" className="relative py-16 md:py-24">
         <div className="container mx-auto px-4">
           <h2 className="font-heading text-3xl md:text-4xl text-foreground text-center mb-2">
             The Archive
@@ -44,14 +47,11 @@ const Index = () => {
         <BubbleMap />
       </section>
 
-      {/* About */}
-      <AboutSection />
-
-      {/* Contact */}
-      <ContactSection />
-
-      {/* Participate */}
+      {/* 3. Share Your Story */}
       <ParticipateSection />
+
+      {/* 4. Contact */}
+      <ContactSection />
 
       {/* Footer */}
       <Footer />
