@@ -100,7 +100,7 @@ const BubbleMap = () => {
                   disabled={!isClickable}
                   onClick={() => isClickable && setSelectedTheme(bubble)}
                   className={`rounded-full ${getGlowClass(bubble.colorVariant)} flex items-center justify-center ${
-                    isClickable ? "cursor-pointer bubble-hover" : "cursor-default opacity-50"
+                    isClickable ? "cursor-pointer bubble-hover animate-fade-in" : "cursor-default opacity-50"
                   }`}
                   style={{
                     width: `${size}px`,
