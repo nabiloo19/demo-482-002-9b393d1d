@@ -139,7 +139,7 @@ const AboutArchiveSection = () => {
   return (
     <>
       {/* Tall scroll container spanning About + Archive */}
-      <div ref={scrollContainerRef} className="relative" style={{ height: "300vh" }}>
+      <div ref={scrollContainerRef} className="relative" style={{ height: "400vh" }}>
         {/* Sticky viewport — stays pinned while user scrolls through the container */}
         <div className="sticky top-0 h-screen w-full overflow-hidden">
           {/* About text — fades out as bubbles move */}
