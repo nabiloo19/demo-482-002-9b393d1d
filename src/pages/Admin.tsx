@@ -231,7 +231,7 @@ const Admin = () => {
   // Login form
   if (!session) {
     return (
-      <div className="min-h-screen bg-gradient-warm flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="grain-overlay" />
         <div className="w-full max-w-sm bg-card/90 backdrop-blur-xl rounded-2xl p-8 shadow-overlay relative z-10">
           <button
