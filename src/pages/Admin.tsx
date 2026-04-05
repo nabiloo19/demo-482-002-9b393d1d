@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail } from "lucide-react";
@@ -62,6 +62,29 @@ const REAL_MADRID = {
 
 const randomPos = () => Math.floor(15 + Math.random() * 70);
 const randomColor = () => COLOR_VARIANTS[Math.floor(Math.random() * COLOR_VARIANTS.length)].value;
+
+const adminThemeStyle = {
+  "--background": "44 70% 95%",
+  "--foreground": "221 48% 18%",
+  "--card": "0 0% 100%",
+  "--card-foreground": "221 48% 18%",
+  "--popover": "0 0% 100%",
+  "--popover-foreground": "221 48% 18%",
+  "--primary": "45 95% 54%",
+  "--primary-foreground": "221 48% 16%",
+  "--secondary": "221 48% 18%",
+  "--secondary-foreground": "44 70% 95%",
+  "--muted": "44 40% 88%",
+  "--muted-foreground": "221 20% 36%",
+  "--accent": "45 95% 54%",
+  "--accent-foreground": "221 48% 16%",
+  "--border": "44 32% 78%",
+  "--input": "44 32% 78%",
+  "--ring": "45 95% 54%",
+  backgroundColor: "hsl(44 70% 95%)",
+  backgroundImage:
+    "radial-gradient(circle at 12% 16%, hsl(45 95% 54% / 0.24), transparent 24%), radial-gradient(circle at 88% 10%, hsl(221 48% 18% / 0.12), transparent 26%), linear-gradient(180deg, hsl(0 0% 100%), hsl(45 58% 93%))",
+} as CSSProperties;
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -255,7 +278,7 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center" style={adminThemeStyle}>
         <p className="font-body text-muted-foreground">Loading...</p>
       </div>
     );
@@ -263,19 +286,32 @@ const Admin = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="relative min-h-screen overflow-hidden bg-background flex items-center justify-center px-4" style={adminThemeStyle}>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-x-0 top-0 h-56" style={{ backgroundImage: "linear-gradient(180deg, hsl(221 48% 18% / 0.12), transparent)" }} />
+          <div className="absolute -left-16 top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: "hsl(45 95% 54% / 0.22)" }} />
+          <div className="absolute right-[-5rem] top-8 h-72 w-72 rounded-full blur-3xl" style={{ background: "hsl(221 48% 18% / 0.12)" }} />
+        </div>
         <div className="grain-overlay" />
-        <div className="w-full max-w-sm bg-card/90 backdrop-blur-xl rounded-2xl p-8 shadow-overlay relative z-10">
+        <div className="w-full max-w-md bg-card/92 backdrop-blur-xl rounded-[2rem] p-8 shadow-overlay relative z-10 border border-border/60">
+          <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground mb-3">Madrid-coded admin</p>
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6 font-body text-sm"
           >
             <ArrowLeft size={16} /> Back
           </button>
-          <h1 className="font-heading text-2xl text-foreground mb-1">Admin</h1>
-          <p className="font-body text-sm text-muted-foreground mb-6">
-            Sign in to manage themes
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground shadow-soft">
+              ⚽
+            </div>
+            <div>
+              <h1 className="font-heading text-2xl text-foreground mb-1">Real Madrid Control Room</h1>
+              <p className="font-body text-sm text-muted-foreground">
+                White, gold, and calm arrogance.
+              </p>
+            </div>
+          </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
@@ -283,7 +319,7 @@ const Admin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+              className="w-full px-4 py-3 rounded-xl bg-background/80 border border-border/60 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
             />
             <input
               type="password"
@@ -292,14 +328,14 @@ const Admin = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+              className="w-full px-4 py-3 rounded-xl bg-background/80 border border-border/60 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
             />
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="w-full px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {authLoading ? "Signing in..." : "Sign In"}
+              {authLoading ? "Signing in..." : "Enter the Bernabéu"}
             </button>
           </form>
         </div>
@@ -308,43 +344,90 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen overflow-hidden bg-background" style={adminThemeStyle}>
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-x-0 top-0 h-64" style={{ backgroundImage: "linear-gradient(180deg, hsl(221 48% 18% / 0.08), transparent)" }} />
+        <div className="absolute -left-24 top-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "hsl(45 95% 54% / 0.18)" }} />
+        <div className="absolute right-[-6rem] top-10 h-80 w-80 rounded-full blur-3xl" style={{ background: "hsl(221 48% 18% / 0.14)" }} />
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(45 95% 54% / 0.8), transparent)" }} />
+      </div>
       <div className="grain-overlay" />
       <div className="relative z-10">
-        <div className="flex items-center justify-between px-6 py-5 md:px-10 border-b border-border/30 bg-card/40 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
+        <div className="border-b border-border/60 bg-card/72 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 md:px-10">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+              >
+                <ArrowLeft size={16} /> Home
+              </button>
+              <div className="hidden h-10 w-px bg-border/80 md:block" />
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground shadow-soft">
+                  ⚽
+                </div>
+                <div>
+                  <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground">Admin aesthetic</p>
+                  <h1 className="font-heading text-xl md:text-2xl text-foreground">Real Madrid Control Room</h1>
+                </div>
+              </div>
+            </div>
             <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+              onClick={() => supabase.auth.signOut()}
+              className="flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-4 py-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
             >
-              <ArrowLeft size={16} /> Home
+              <LogOut size={16} /> Sign Out
             </button>
-            <h1 className="font-heading text-xl text-foreground">Admin</h1>
           </div>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
-          >
-            <LogOut size={16} /> Sign Out
-          </button>
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="flex gap-1 mb-8 bg-card/60 rounded-lg p-1 w-fit">
+        <div className="mx-auto max-w-6xl px-6 py-8 md:px-10">
+          <section className="mb-8 grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card/90 p-8 shadow-overlay">
+              <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(135deg, hsl(221 48% 18% / 0.08), transparent 45%), radial-gradient(circle at top right, hsl(45 95% 54% / 0.18), transparent 36%)" }} />
+              <div className="relative z-10">
+                <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground mb-3">White. Gold. Heritage.</p>
+                <h2 className="font-heading text-4xl md:text-5xl leading-none text-foreground mb-4">
+                  Madridista
+                  <br />
+                  <span className="italic text-accent">Control Room</span>
+                </h2>
+                <p className="max-w-xl font-body text-sm md:text-base leading-relaxed text-muted-foreground">
+                  This backend workspace now carries a full Real Madrid mood: bright whites, deep navy, gold accents, trophy-room energy, and just enough swagger.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">Ramos 92:48</span>
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">La Décima</span>
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">Hala Madrid</span>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {REAL_MADRID.stats.map((s) => (
+                <div key={s.label} className="rounded-[1.5rem] border border-border/60 bg-card/92 p-5 text-center shadow-soft">
+                  <p className="font-heading text-4xl text-accent">{s.value}</p>
+                  <p className="mt-2 font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="flex flex-wrap gap-2 mb-8 rounded-full border border-border/60 bg-card/80 p-1.5 shadow-soft w-fit">
             <button
               onClick={() => setActiveTab("themes")}
-              className={`px-4 py-2 rounded-md font-body text-sm transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               Themes
             </button>
             <button
               onClick={() => setActiveTab("submissions")}
-              className={`px-4 py-2 rounded-md font-body text-sm transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               <Mail size={14} />
               Submissions
               {submissions.length > 0 && (
-                <span className="bg-accent/20 text-accent text-[10px] font-medium px-1.5 py-0.5 rounded-full">
+                <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">
                   {submissions.length}
                 </span>
               )}
@@ -362,7 +445,7 @@ const Admin = () => {
             )}
 
             {showForm && (
-              <form onSubmit={handleSave} className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft mb-8 space-y-5">
+              <form onSubmit={handleSave} className="mb-8 space-y-5 rounded-[1.75rem] border border-border/60 bg-card/92 p-6 md:p-8 shadow-overlay backdrop-blur-xl">
                 <h2 className="font-heading text-lg text-foreground">
                   {editingId ? "Edit Theme" : "New Theme"}
                 </h2>
@@ -494,7 +577,7 @@ const Admin = () => {
               {themes.map((t) => {
                 const colorInfo = COLOR_VARIANTS.find((c) => c.value === t.color_variant);
                 return (
-                  <div key={t.id} className="flex items-center gap-4 bg-card/80 backdrop-blur-sm rounded-xl p-4 shadow-soft">
+                  <div key={t.id} className="flex items-center gap-4 rounded-[1.5rem] border border-border/50 bg-card/92 p-4 shadow-soft backdrop-blur-xl">
                     {t.banner_url && (
                       <img src={t.banner_url} alt={t.theme} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
                     )}
@@ -536,59 +619,6 @@ const Admin = () => {
               })}
             </div>
 
-            {/* Real Madrid Full Theme */}
-            <div className="mt-16 border-t border-border/20 pt-8 space-y-6">
-              <div className="text-center">
-                <p className="font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">The Beautiful Game</p>
-                <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-1">⚽ La Sala VIP</h2>
-                <p className="font-heading italic text-accent text-lg">{REAL_MADRID.motto}</p>
-              </div>
-
-              {/* Stats bar */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {REAL_MADRID.stats.map((s) => (
-                  <div key={s.label} className="bg-card/80 rounded-xl p-4 text-center border border-border/30">
-                    <p className="font-heading text-3xl text-accent">{s.value}</p>
-                    <p className="font-body text-[10px] uppercase tracking-widest text-muted-foreground mt-1">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Iconic Moments */}
-              <div>
-                <h3 className="font-heading text-lg text-foreground mb-3">Iconic Moments</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {REAL_MADRID.moments.map((m) => (
-                    <div key={m.title} className="bg-card/60 backdrop-blur-sm rounded-xl p-5 border border-border/30 hover:border-accent/30 transition-colors group">
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">{m.icon}</span>
-                        <div>
-                          <h4 className="font-heading text-base text-foreground group-hover:text-accent transition-colors">{m.title}</h4>
-                          <p className="font-body text-xs text-muted-foreground mt-1 leading-relaxed">{m.desc}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quotes */}
-              <div>
-                <h3 className="font-heading text-lg text-foreground mb-3">From the Stands</h3>
-                <div className="space-y-3">
-                  {REAL_MADRID.quotes.map((q, i) => (
-                    <div key={i} className="bg-background/50 rounded-xl p-5 border-l-2 border-accent/50">
-                      <blockquote className="font-heading italic text-base text-foreground/80">"{q.text}"</blockquote>
-                      <p className="font-body text-[10px] uppercase tracking-widest text-muted-foreground mt-2">{q.author}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <p className="font-body text-xs text-muted-foreground/40 text-center pt-4">
-                Hasta el final, vamos Real ✦
-              </p>
-            </div>
           </>}
 
           {activeTab === "submissions" && (
@@ -597,7 +627,7 @@ const Admin = () => {
                 <p className="font-body text-sm text-muted-foreground text-center py-12">No submissions yet.</p>
               )}
               {submissions.map((s) => (
-                <div key={s.id} className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-soft space-y-2">
+                <div key={s.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl space-y-2">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
