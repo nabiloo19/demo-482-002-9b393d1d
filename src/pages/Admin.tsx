@@ -207,10 +207,16 @@ const Admin = () => {
       if (!video_url) { setSaving(false); return; }
     }
 
+    // Read translation file content if provided
+    let translationText = formData.translation;
+    if (translationFile) {
+      translationText = await translationFile.text();
+    }
+
     const payload: any = {
       theme: formData.theme.trim(),
       excerpt: formData.excerpt.trim() || null,
-      translation: formData.translation.trim() || null,
+      translation: translationText.trim() || null,
       frequency: Math.min(100, Math.max(1, formData.frequency)),
       x: formData.x,
       y: formData.y,
