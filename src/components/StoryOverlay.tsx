@@ -9,29 +9,53 @@ interface StoryOverlayProps {
   onClose: () => void;
 }
 
+/** Parse "HH:MM:SS" or "MM:SS" to seconds */
+const parseTimestamp = (ts: string): number => {
+  const parts = ts.trim().split(":").map(Number);
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  return 0;
+};
+
+interface SubtitleSegment {
+  start: number;
+  end: number;
+  text: string;
+}
+
+/** Parse translation text with format: "00:00:05 - 00:00:12 | subtitle text" */
+const parseSubtitles = (raw: string): SubtitleSegment[] => {
+  return raw
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && line.includes("|"))
+    .map((line) => {
+      const [timePart, ...textParts] = line.split("|");
+      const text = textParts.join("|").trim();
+      const times = timePart.split("-").map((t) => t.trim());
+      const start = parseTimestamp(times[0] || "0");
+      const end = parseTimestamp(times[1] || "0");
+      return { start, end, text };
+    })
+    .filter((s) => s.text.length > 0 && s.end > s.start);
+};
+
 const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentSubtitle, setCurrentSubtitle] = useState("");
 
   const subtitleSegments = useMemo(() => {
     if (!theme?.translation) return [];
-    // Split translation into sentences for timed display
-    return theme.translation
-      .split(/(?<=[.!?])\s+/)
-      .filter((s) => s.trim().length > 0);
+    return parseSubtitles(theme.translation);
   }, [theme?.translation]);
 
   const handleTimeUpdate = useCallback(() => {
     if (!videoRef.current || subtitleSegments.length === 0) return;
-    const video = videoRef.current;
-    const duration = video.duration || 1;
-    const current = video.currentTime;
-    const segmentDuration = duration / subtitleSegments.length;
-    const idx = Math.min(
-      Math.floor(current / segmentDuration),
-      subtitleSegments.length - 1
+    const currentTime = videoRef.current.currentTime;
+    const active = subtitleSegments.find(
+      (s) => currentTime >= s.start && currentTime < s.end
     );
-    setCurrentSubtitle(subtitleSegments[idx] || "");
+    setCurrentSubtitle(active?.text || "");
   }, [subtitleSegments]);
 
   return (

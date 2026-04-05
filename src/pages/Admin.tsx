@@ -85,6 +85,7 @@ const Admin = () => {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [translationFile, setTranslationFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
   const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
@@ -158,6 +159,7 @@ const Admin = () => {
     setBannerFile(null);
     setAudioFile(null);
     setVideoFile(null);
+    setTranslationFile(null);
     setEditingId(null);
     setShowForm(false);
   };
@@ -176,6 +178,7 @@ const Admin = () => {
     setBannerFile(null);
     setAudioFile(null);
     setVideoFile(null);
+    setTranslationFile(null);
     setShowForm(true);
   };
 
@@ -204,10 +207,16 @@ const Admin = () => {
       if (!video_url) { setSaving(false); return; }
     }
 
+    // Read translation file content if provided
+    let translationText = formData.translation;
+    if (translationFile) {
+      translationText = await translationFile.text();
+    }
+
     const payload: any = {
       theme: formData.theme.trim(),
       excerpt: formData.excerpt.trim() || null,
-      translation: formData.translation.trim() || null,
+      translation: translationText.trim() || null,
       frequency: Math.min(100, Math.max(1, formData.frequency)),
       x: formData.x,
       y: formData.y,
@@ -413,17 +422,21 @@ const Admin = () => {
                 </div>
 
                 <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Translation / Subtitle</label>
-                  <textarea
-                    rows={3}
-                    value={formData.translation}
-                    onChange={(e) => setFormData({ ...formData, translation: e.target.value })}
-                    placeholder="Text that will appear as subtitles over the video..."
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition resize-none"
-                  />
+                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Translation / Subtitle File (.txt)</label>
+                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                    <Upload size={16} />
+                    {translationFile ? translationFile.name : formData.translation ? "File already uploaded ✓" : "Choose .txt file..."}
+                    <input type="file" accept=".txt,.srt" onChange={(e) => setTranslationFile(e.target.files?.[0] || null)} className="hidden" />
+                  </label>
                   <p className="font-body text-[10px] text-muted-foreground/60 mt-1">
-                    Sentences will be displayed one at a time as the video plays.
+                    Format each line as: <code className="bg-background/80 px-1 rounded">00:00:05 - 00:00:12 | Your subtitle text here</code>
                   </p>
+                  {formData.translation && !translationFile && (
+                    <details className="mt-2">
+                      <summary className="font-body text-[10px] text-accent cursor-pointer">Preview current subtitles</summary>
+                      <pre className="mt-1 p-3 rounded-lg bg-background/50 border border-border/30 font-body text-[11px] text-muted-foreground overflow-x-auto max-h-32 overflow-y-auto whitespace-pre-wrap">{formData.translation}</pre>
+                    </details>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
