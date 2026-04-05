@@ -7,6 +7,7 @@ import { toast } from "@/hooks/use-toast";
 interface ThemeFormData {
   theme: string;
   excerpt: string;
+  translation: string;
   frequency: number;
   x: number;
   y: number;
@@ -17,6 +18,7 @@ interface ThemeRow {
   id: string;
   theme: string;
   excerpt: string | null;
+  translation: string | null;
   frequency: number;
   x: number;
   y: number;
@@ -27,8 +29,25 @@ interface ThemeRow {
   created_at: string;
 }
 
+const COLOR_VARIANTS = [
+  { value: "honey", label: "Honey", hsl: "38 85% 52%" },
+  { value: "amber", label: "Amber", hsl: "35 80% 55%" },
+  { value: "saffron", label: "Saffron", hsl: "45 90% 50%" },
+  { value: "sand", label: "Sand", hsl: "32 60% 58%" },
+  { value: "gold", label: "Gold", hsl: "40 75% 60%" },
+] as const;
+
+const REAL_MADRID_PHRASES = [
+  "¡Hala Madrid y nada más!",
+  "Ramos 92:48 💥",
+  "La Décima",
+  "Zidane's volley — pure art",
+  "Cristiano: SIUUUU!",
+  "Hasta el final, vamos Real",
+];
+
 const randomPos = () => Math.floor(15 + Math.random() * 70);
-const randomColor = () => (["cream", "blush", "sand"] as const)[Math.floor(Math.random() * 3)];
+const randomColor = () => COLOR_VARIANTS[Math.floor(Math.random() * COLOR_VARIANTS.length)].value;
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -43,6 +62,7 @@ const Admin = () => {
   const [formData, setFormData] = useState<ThemeFormData>({
     theme: "",
     excerpt: "",
+    translation: "",
     frequency: 10,
     x: randomPos(),
     y: randomPos(),
@@ -55,6 +75,7 @@ const Admin = () => {
   const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
   const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
   const [deleteSubmissionId, setDeleteSubmissionId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -106,17 +127,6 @@ const Admin = () => {
     setAuthLoading(false);
   };
 
-  const handleSignup = async () => {
-    setAuthLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Check your email", description: "We sent you a confirmation link." });
-    }
-    setAuthLoading(false);
-  };
-
   const uploadFile = async (file: File, folder: string): Promise<string | null> => {
     const ext = file.name.split(".").pop();
     const path = `${folder}/${crypto.randomUUID()}.${ext}`;
@@ -130,7 +140,7 @@ const Admin = () => {
   };
 
   const resetForm = () => {
-    setFormData({ theme: "", excerpt: "", frequency: 10, x: randomPos(), y: randomPos(), color_variant: randomColor() });
+    setFormData({ theme: "", excerpt: "", translation: "", frequency: 10, x: randomPos(), y: randomPos(), color_variant: randomColor() });
     setBannerFile(null);
     setAudioFile(null);
     setVideoFile(null);
@@ -143,6 +153,7 @@ const Admin = () => {
     setFormData({
       theme: t.theme,
       excerpt: t.excerpt || "",
+      translation: t.translation || "",
       frequency: t.frequency,
       x: t.x,
       y: t.y,
@@ -182,7 +193,8 @@ const Admin = () => {
     const payload: any = {
       theme: formData.theme.trim(),
       excerpt: formData.excerpt.trim() || null,
-      frequency: formData.frequency,
+      translation: formData.translation.trim() || null,
+      frequency: Math.min(100, Math.max(1, formData.frequency)),
       x: formData.x,
       y: formData.y,
       color_variant: formData.color_variant,
@@ -208,8 +220,6 @@ const Admin = () => {
     setSaving(false);
   };
 
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
-
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("themes").delete().eq("id", id);
     if (error) {
@@ -228,7 +238,6 @@ const Admin = () => {
     );
   }
 
-  // Login form
   if (!session) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -275,12 +284,10 @@ const Admin = () => {
     );
   }
 
-  // Admin dashboard
   return (
     <div className="min-h-screen bg-background">
       <div className="grain-overlay" />
       <div className="relative z-10">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 md:px-10 border-b border-border/30 bg-card/40 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <button
@@ -289,9 +296,7 @@ const Admin = () => {
             >
               <ArrowLeft size={16} /> Home
             </button>
-            <h1 className="font-heading text-xl text-foreground">
-              Admin
-            </h1>
+            <h1 className="font-heading text-xl text-foreground">Admin</h1>
           </div>
           <button
             onClick={() => supabase.auth.signOut()}
@@ -302,7 +307,6 @@ const Admin = () => {
         </div>
 
         <div className="max-w-3xl mx-auto px-6 py-8">
-          {/* Tabs */}
           <div className="flex gap-1 mb-8 bg-card/60 rounded-lg p-1 w-fit">
             <button
               onClick={() => setActiveTab("themes")}
@@ -325,277 +329,230 @@ const Admin = () => {
           </div>
 
           {activeTab === "themes" && <>
-          {/* Add button */}
-          {!showForm && (
-            <button
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-              className="flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors mb-8"
-            >
-              <Plus size={16} />
-              Add New Theme
-            </button>
-          )}
-
-          {/* Form */}
-          {showForm && (
-            <form
-              onSubmit={handleSave}
-              className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft mb-8 space-y-5"
-            >
-              <h2 className="font-heading text-lg text-foreground">
-                {editingId ? "Edit Theme" : "New Theme"}
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Theme Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.theme}
-                    onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
-                    placeholder="e.g. The Coffee Ritual"
-                    required
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                  />
-                </div>
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Color Variant
-                  </label>
-                  <select
-                    value={formData.color_variant}
-                    onChange={(e) => setFormData({ ...formData, color_variant: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
-                  >
-                    <option value="cream">Cream</option>
-                    <option value="blush">Blush</option>
-                    <option value="sand">Sand</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                  Excerpt
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  placeholder="A poetic description of this theme..."
-                  className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition resize-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Banner Image
-                  </label>
-                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
-                    <Upload size={16} />
-                    {bannerFile ? bannerFile.name : "Choose image..."}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setBannerFile(e.target.files?.[0] || null)}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Audio File
-                  </label>
-                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
-                    <Upload size={16} />
-                    {audioFile ? audioFile.name : "Choose audio..."}
-                    <input
-                      type="file"
-                      accept="audio/*"
-                      onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                <div>
-                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
-                    Video File
-                  </label>
-                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
-                    <Upload size={16} />
-                    {videoFile ? videoFile.name : "Choose video..."}
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
-                >
-                  {saving ? "Saving..." : editingId ? "Update Theme" : "Save Theme"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-6 py-3 bg-secondary text-secondary-foreground font-body text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Themes list */}
-          <div className="space-y-3">
-            {themes.length === 0 && (
-              <p className="font-body text-sm text-muted-foreground text-center py-12">
-                No themes yet. Add your first theme above.
-              </p>
-            )}
-            {themes.map((t) => (
-              <div
-                key={t.id}
-                className="flex items-center gap-4 bg-card/80 backdrop-blur-sm rounded-xl p-4 shadow-soft"
+            {!showForm && (
+              <button
+                onClick={() => { resetForm(); setShowForm(true); }}
+                className="flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors mb-8"
               >
-                {t.banner_url && (
-                  <img
-                    src={t.banner_url}
-                    alt={t.theme}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                  />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-heading text-lg text-foreground">
-                      {t.theme}
-                    </h3>
-                    <span
-                      className={`w-3 h-3 rounded-full ${
-                        t.color_variant === "blush"
-                          ? "bg-bubble-blush"
-                          : t.color_variant === "sand"
-                          ? "bg-bubble-sand"
-                          : "bg-bubble-cream"
-                      }`}
+                <Plus size={16} /> Add New Theme
+              </button>
+            )}
+
+            {showForm && (
+              <form onSubmit={handleSave} className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft mb-8 space-y-5">
+                <h2 className="font-heading text-lg text-foreground">
+                  {editingId ? "Edit Theme" : "New Theme"}
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Theme Name *</label>
+                    <input
+                      type="text"
+                      value={formData.theme}
+                      onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
+                      placeholder="e.g. The Coffee Ritual"
+                      required
+                      className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
                     />
-                    <span className="font-body text-xs text-muted-foreground">
-                      freq: {t.frequency}
-                    </span>
                   </div>
-                  {t.excerpt && (
-                    <p className="font-body text-xs text-muted-foreground truncate mt-0.5">
-                      {t.excerpt}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-3 mt-1">
-                    {t.audio_url && (
-                      <span className="font-body text-[10px] uppercase tracking-wider text-accent">
-                        ♫ Audio
-                      </span>
-                    )}
-                    {t.video_url && (
-                      <span className="font-body text-[10px] uppercase tracking-wider text-accent">
-                        ▶ Video
-                      </span>
-                    )}
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Color Variant</label>
+                    <select
+                      value={formData.color_variant}
+                      onChange={(e) => setFormData({ ...formData, color_variant: e.target.value })}
+                      className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+                    >
+                      {COLOR_VARIANTS.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-                <button
-                  onClick={() => startEdit(t)}
-                  className="p-2 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                  aria-label="Edit theme"
-                >
-                  <Pencil size={16} />
-                </button>
-                {deleteConfirmId === t.id ? (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button
-                      onClick={() => handleDelete(t.id)}
-                      className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors"
-                    >
-                      Confirm
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirmId(null)}
-                      className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors"
-                    >
-                      Cancel
-                    </button>
+
+                <div>
+                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">
+                    Frequency (1-100)
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min={1}
+                      max={100}
+                      value={formData.frequency}
+                      onChange={(e) => setFormData({ ...formData, frequency: Number(e.target.value) })}
+                      className="flex-1 accent-accent"
+                    />
+                    <span className="font-body text-sm text-foreground w-10 text-center tabular-nums">{formData.frequency}</span>
                   </div>
-                ) : (
+                </div>
+
+                <div>
+                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Excerpt</label>
+                  <textarea
+                    rows={3}
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                    placeholder="A poetic description of this theme..."
+                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Translation / Subtitle</label>
+                  <textarea
+                    rows={3}
+                    value={formData.translation}
+                    onChange={(e) => setFormData({ ...formData, translation: e.target.value })}
+                    placeholder="Text that will appear as subtitles over the video..."
+                    className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition resize-none"
+                  />
+                  <p className="font-body text-[10px] text-muted-foreground/60 mt-1">
+                    Sentences will be displayed one at a time as the video plays.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Banner Image</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />
+                      {bannerFile ? bannerFile.name : "Choose image..."}
+                      <input type="file" accept="image/*" onChange={(e) => setBannerFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Audio File</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />
+                      {audioFile ? audioFile.name : "Choose audio..."}
+                      <input type="file" accept="audio/*" onChange={(e) => setAudioFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Video File</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />
+                      {videoFile ? videoFile.name : "Choose video..."}
+                      <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
                   <button
-                    onClick={() => setDeleteConfirmId(t.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-                    aria-label="Delete theme"
+                    type="submit"
+                    disabled={saving}
+                    className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
                   >
-                    <Trash2 size={16} />
+                    {saving ? "Saving..." : editingId ? "Update Theme" : "Save Theme"}
                   </button>
-                )}
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="px-6 py-3 bg-secondary text-secondary-foreground font-body text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="space-y-3">
+              {themes.length === 0 && (
+                <p className="font-body text-sm text-muted-foreground text-center py-12">
+                  No themes yet. Add your first theme above.
+                </p>
+              )}
+              {themes.map((t) => {
+                const colorInfo = COLOR_VARIANTS.find((c) => c.value === t.color_variant);
+                return (
+                  <div key={t.id} className="flex items-center gap-4 bg-card/80 backdrop-blur-sm rounded-xl p-4 shadow-soft">
+                    {t.banner_url && (
+                      <img src={t.banner_url} alt={t.theme} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-heading text-lg text-foreground">{t.theme}</h3>
+                        <span
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ background: colorInfo ? `hsl(${colorInfo.hsl})` : "hsl(35, 80%, 55%)" }}
+                        />
+                        <span className="font-body text-xs text-muted-foreground">
+                          freq: {t.frequency}
+                        </span>
+                      </div>
+                      {t.excerpt && (
+                        <p className="font-body text-xs text-muted-foreground truncate mt-0.5">{t.excerpt}</p>
+                      )}
+                      <div className="flex items-center gap-3 mt-1">
+                        {t.audio_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">♫ Audio</span>}
+                        {t.video_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">▶ Video</span>}
+                        {t.translation && <span className="font-body text-[10px] uppercase tracking-wider text-accent">📝 Subtitles</span>}
+                      </div>
+                    </div>
+                    <button onClick={() => startEdit(t)} className="p-2 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0" aria-label="Edit theme">
+                      <Pencil size={16} />
+                    </button>
+                    {deleteConfirmId === t.id ? (
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <button onClick={() => handleDelete(t.id)} className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors">Confirm</button>
+                        <button onClick={() => setDeleteConfirmId(null)} className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors">Cancel</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteConfirmId(t.id)} className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0" aria-label="Delete theme">
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Real Madrid Easter Egg */}
+            <div className="mt-16 border-t border-border/20 pt-8">
+              <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-soft">
+                <h3 className="font-heading text-lg text-foreground mb-1">⚽ La Sala VIP</h3>
+                <p className="font-body text-xs text-muted-foreground mb-4">For the Madridistas. Hala Madrid.</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {REAL_MADRID_PHRASES.map((phrase, i) => (
+                    <div
+                      key={i}
+                      className="bg-background/50 rounded-xl p-3 text-center border border-border/30 hover:border-accent/40 transition-colors"
+                    >
+                      <p className="font-heading text-sm text-foreground/90">{phrase}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
           </>}
 
           {activeTab === "submissions" && (
             <div className="space-y-3">
               {submissions.length === 0 && (
-                <p className="font-body text-sm text-muted-foreground text-center py-12">
-                  No submissions yet.
-                </p>
+                <p className="font-body text-sm text-muted-foreground text-center py-12">No submissions yet.</p>
               )}
               {submissions.map((s) => (
-                <div
-                  key={s.id}
-                  className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-soft space-y-2"
-                >
+                <div key={s.id} className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-soft space-y-2">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
                         <h3 className="font-heading text-base text-foreground">{s.name}</h3>
                         <span className="font-body text-xs text-muted-foreground">{s.email}</span>
                       </div>
-                      <p className="font-body text-sm text-muted-foreground/80 mt-2 whitespace-pre-wrap leading-relaxed">
-                        {s.message}
-                      </p>
+                      <p className="font-body text-sm text-muted-foreground/80 mt-2 whitespace-pre-wrap leading-relaxed">{s.message}</p>
                       <p className="font-body text-[10px] text-muted-foreground/50 mt-2 uppercase tracking-wider">
                         {new Date(s.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
                     {deleteSubmissionId === s.id ? (
                       <div className="flex items-center gap-1 flex-shrink-0">
-                        <button
-                          onClick={() => handleDeleteSubmission(s.id)}
-                          className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors"
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          onClick={() => setDeleteSubmissionId(null)}
-                          className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors"
-                        >
-                          Cancel
-                        </button>
+                        <button onClick={() => handleDeleteSubmission(s.id)} className="px-3 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded-lg hover:bg-destructive/90 transition-colors">Confirm</button>
+                        <button onClick={() => setDeleteSubmissionId(null)} className="px-3 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded-lg hover:bg-secondary/80 transition-colors">Cancel</button>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => setDeleteSubmissionId(s.id)}
-                        className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-                        aria-label="Delete submission"
-                      >
+                      <button onClick={() => setDeleteSubmissionId(s.id)} className="p-2 text-muted-foreground hover:text-destructive transition-colors flex-shrink-0" aria-label="Delete submission">
                         <Trash2 size={16} />
                       </button>
                     )}

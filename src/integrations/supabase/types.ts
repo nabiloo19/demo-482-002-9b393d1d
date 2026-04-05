@@ -48,6 +48,7 @@ export type Database = {
           frequency: number
           id: string
           theme: string
+          translation: string | null
           updated_at: string
           video_url: string | null
           x: number
@@ -62,6 +63,7 @@ export type Database = {
           frequency?: number
           id?: string
           theme: string
+          translation?: string | null
           updated_at?: string
           video_url?: string | null
           x?: number
@@ -76,6 +78,7 @@ export type Database = {
           frequency?: number
           id?: string
           theme?: string
+          translation?: string | null
           updated_at?: string
           video_url?: string | null
           x?: number

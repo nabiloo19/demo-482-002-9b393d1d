@@ -1,0 +1,1 @@
+ALTER TABLE public.themes ADD COLUMN translation text;

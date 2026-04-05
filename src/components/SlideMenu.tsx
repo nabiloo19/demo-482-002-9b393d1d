@@ -69,6 +69,17 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
                   {link.label}
                 </motion.button>
               ))}
+              <motion.a
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 + navLinks.length * 0.07 }}
+                href="https://yiepodcast.web.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-heading text-2xl md:text-3xl text-accent/80 hover:text-accent transition-colors py-4 border-b border-sidebar-border/30 text-left"
+              >
+                Voices Unfiltered ↗
+              </motion.a>
             </div>
 
             <div className="mt-auto px-10 py-8">

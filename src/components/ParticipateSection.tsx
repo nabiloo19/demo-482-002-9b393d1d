@@ -61,7 +61,7 @@ const ParticipateSection = () => {
         </h2>
         <p className="font-body text-base text-muted-foreground leading-relaxed mb-10 max-w-md mx-auto">
           Every memory matters. Whether it's the scent of your mother's kitchen,
-          the games you played as a child, or the moment you left — your story
+          the games you played as a child, or the moment you left, your story
           is part of our collective history.
         </p>
 

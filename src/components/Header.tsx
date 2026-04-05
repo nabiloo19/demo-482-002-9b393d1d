@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { Menu, Sun, Moon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu } from "lucide-react";
 import SlideMenu from "./SlideMenu";
 
 const scrollToSection = (id: string) => {
@@ -9,28 +9,10 @@ const scrollToSection = (id: string) => {
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("theme");
-      if (stored) return stored === "dark";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return true;
-  });
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDark]);
-
-  const handleShare = useCallback(() => {
-    scrollToSection("participate");
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
   }, []);
 
   return (
@@ -44,13 +26,6 @@ const Header = () => {
         </button>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 text-foreground/70 hover:text-foreground transition-colors"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDark ? <Sun size={20} strokeWidth={1.5} /> : <Moon size={20} strokeWidth={1.5} />}
-          </button>
-          <button
             onClick={() => setMenuOpen(true)}
             className="p-2 text-foreground/80 hover:text-foreground transition-colors"
             aria-label="Open menu"
@@ -58,7 +33,7 @@ const Header = () => {
             <Menu size={24} strokeWidth={1.5} />
           </button>
           <button
-            onClick={handleShare}
+            onClick={() => scrollToSection("participate")}
             className="hidden sm:block px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
           >
             Share Your Story

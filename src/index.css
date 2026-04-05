@@ -4,8 +4,7 @@
 
 /* 
  * Yemenis in Exile — Design System
- * Dark: Deep navy base, golden amber & rose ruby bubbles
- * Light: Warm cream/sand base, same accent palette
+ * Dark: Deep navy base, warm yellow/amber/gold bubbles
  * Typography: Cormorant Garamond (heading) + DM Sans (body)
  */
 
@@ -51,8 +50,10 @@
     --blush: 340 30% 55%;
     --warm-brown: 350 35% 20%;
 
+    --bubble-honey: 38 85% 52%;
     --bubble-amber: 35 80% 55%;
-    --bubble-rose: 340 50% 50%;
+    --bubble-saffron: 45 90% 50%;
+    --bubble-sand: 32 60% 58%;
     --bubble-gold: 40 75% 60%;
 
     --shadow-soft: 0 4px 20px -4px hsl(230, 20%, 30%, 0.12);
@@ -68,7 +69,6 @@
     --sidebar-border: 35 15% 78%;
     --sidebar-ring: 350 45% 35%;
 
-    /* Overlay card — slightly darker in light mode */
     --overlay-bg: 35 25% 96%;
     --overlay-fg: 230 30% 16%;
   }
@@ -111,8 +111,10 @@
     --blush: 340 30% 45%;
     --warm-brown: 350 35% 20%;
 
+    --bubble-honey: 38 85% 52%;
     --bubble-amber: 35 80% 55%;
-    --bubble-rose: 340 50% 50%;
+    --bubble-saffron: 45 90% 50%;
+    --bubble-sand: 32 60% 58%;
     --bubble-gold: 40 75% 60%;
 
     --shadow-soft: 0 4px 20px -4px hsl(0, 0%, 0%, 0.4);
@@ -198,17 +200,29 @@
   }
 }
 
-/* Bubble glow effects */
+/* Bubble glow effects — 5 yellow-family variants */
+.bubble-glow-honey {
+  background: radial-gradient(circle, hsl(38, 85%, 52%) 0%, hsl(38, 75%, 38%) 60%, transparent 100%);
+  box-shadow: 0 0 30px 8px hsl(38, 85%, 52%, 0.3), inset 0 0 20px hsl(38, 90%, 65%, 0.15);
+  border: 1.5px solid hsl(38, 65%, 35%, 0.6);
+}
+
 .bubble-glow-amber {
   background: radial-gradient(circle, hsl(35, 80%, 55%) 0%, hsl(35, 70%, 40%) 60%, transparent 100%);
   box-shadow: 0 0 30px 8px hsl(35, 80%, 55%, 0.3), inset 0 0 20px hsl(35, 90%, 70%, 0.15);
   border: 1.5px solid hsl(35, 60%, 35%, 0.6);
 }
 
-.bubble-glow-rose {
-  background: radial-gradient(circle, hsl(340, 50%, 55%) 0%, hsl(340, 45%, 38%) 60%, transparent 100%);
-  box-shadow: 0 0 30px 8px hsl(340, 50%, 50%, 0.3), inset 0 0 20px hsl(340, 60%, 65%, 0.15);
-  border: 1.5px solid hsl(340, 40%, 32%, 0.6);
+.bubble-glow-saffron {
+  background: radial-gradient(circle, hsl(45, 90%, 50%) 0%, hsl(45, 80%, 38%) 60%, transparent 100%);
+  box-shadow: 0 0 30px 8px hsl(45, 90%, 50%, 0.3), inset 0 0 20px hsl(45, 95%, 65%, 0.15);
+  border: 1.5px solid hsl(45, 70%, 35%, 0.6);
+}
+
+.bubble-glow-sand {
+  background: radial-gradient(circle, hsl(32, 60%, 58%) 0%, hsl(32, 50%, 42%) 60%, transparent 100%);
+  box-shadow: 0 0 30px 8px hsl(32, 60%, 55%, 0.3), inset 0 0 20px hsl(32, 70%, 68%, 0.15);
+  border: 1.5px solid hsl(32, 45%, 35%, 0.6);
 }
 
 .bubble-glow-gold {

@@ -66,11 +66,12 @@ const IndexPage = () => {
         frequency: t.frequency,
         x: t.x,
         y: t.y,
-        colorVariant: (t.color_variant as "amber" | "rose" | "gold") || "amber",
+        colorVariant: (t.color_variant as ThemeBubble["colorVariant"]) || "amber",
         excerpt: t.excerpt || undefined,
         bannerUrl: t.banner_url || undefined,
         audioUrl: t.audio_url || undefined,
         videoUrl: t.video_url || undefined,
+        translation: (t as any).translation || undefined,
       }));
     }
     return staticThemes;
@@ -88,8 +89,10 @@ const IndexPage = () => {
   );
 
   const getGlowClass = (v: string) => {
-    if (v === "rose" || v === "blush") return "bubble-glow-rose";
-    if (v === "gold" || v === "sand") return "bubble-glow-gold";
+    if (v === "honey") return "bubble-glow-honey";
+    if (v === "saffron") return "bubble-glow-saffron";
+    if (v === "sand") return "bubble-glow-sand";
+    if (v === "gold") return "bubble-glow-gold";
     return "bubble-glow-amber";
   };
 
@@ -153,7 +156,7 @@ const IndexPage = () => {
             The Archive
           </h2>
           <p className="font-body text-muted-foreground text-center max-w-xl mx-auto mb-8">
-            Explore the most common themes shared by Yemenis in exile. Click a bubble to hear their stories.
+            Explore the most common themes shared by Yemenis in exile. Tap a bubble to hear their stories.
           </p>
         </div>
         {/* This is the target area where bubbles group */}
