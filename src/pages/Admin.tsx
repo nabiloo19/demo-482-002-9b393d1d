@@ -627,7 +627,7 @@ const Admin = () => {
                 <p className="font-body text-sm text-muted-foreground text-center py-12">No submissions yet.</p>
               )}
               {submissions.map((s) => (
-                <div key={s.id} className="bg-card/80 backdrop-blur-sm rounded-xl p-5 shadow-soft space-y-2">
+                <div key={s.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl space-y-2">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
