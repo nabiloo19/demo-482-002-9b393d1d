@@ -159,6 +159,7 @@ const Admin = () => {
     setBannerFile(null);
     setAudioFile(null);
     setVideoFile(null);
+    setTranslationFile(null);
     setEditingId(null);
     setShowForm(false);
   };
