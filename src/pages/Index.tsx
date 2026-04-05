@@ -66,7 +66,7 @@ const IndexPage = () => {
         frequency: t.frequency,
         x: t.x,
         y: t.y,
-        colorVariant: (t.color_variant as "amber" | "rose" | "gold") || "amber",
+        colorVariant: (t.color_variant as ThemeBubble["colorVariant"]) || "amber",
         excerpt: t.excerpt || undefined,
         bannerUrl: t.banner_url || undefined,
         audioUrl: t.audio_url || undefined,
