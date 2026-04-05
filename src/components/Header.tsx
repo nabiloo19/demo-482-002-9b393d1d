@@ -34,7 +34,7 @@ const Header = () => {
           </button>
           <button
             onClick={() => scrollToSection("participate")}
-            className="hidden sm:block px-5 py-2.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+            className="hidden sm:block px-5 py-2.5 bg-accent text-accent-foreground font-body text-sm font-medium rounded-md hover:bg-accent/90 transition-colors"
           >
             Share Your Story
           </button>

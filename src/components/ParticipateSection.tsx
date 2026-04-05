@@ -126,7 +126,7 @@ const ParticipateSection = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full px-5 py-3.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors mt-2 disabled:opacity-50"
+              className="w-full px-5 py-3.5 bg-accent text-accent-foreground font-body text-sm font-medium rounded-lg hover:bg-accent/90 transition-colors mt-2 disabled:opacity-50"
             >
               {submitting ? "Submitting..." : "Submit Your Story"}
             </button>
