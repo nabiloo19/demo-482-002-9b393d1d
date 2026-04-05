@@ -85,7 +85,7 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
             <div className="mt-auto px-10 py-8">
               <button
                 onClick={() => handleNavClick("participate")}
-                className="w-full px-5 py-3.5 bg-primary text-primary-foreground font-body text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+                className="w-full px-5 py-3.5 bg-accent text-accent-foreground font-body text-sm font-medium rounded-md hover:bg-accent/90 transition-colors"
               >
                 Share Your Story
               </button>
