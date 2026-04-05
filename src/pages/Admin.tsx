@@ -344,43 +344,90 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen overflow-hidden bg-background" style={adminThemeStyle}>
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-x-0 top-0 h-64" style={{ backgroundImage: "linear-gradient(180deg, hsl(221 48% 18% / 0.08), transparent)" }} />
+        <div className="absolute -left-24 top-24 h-72 w-72 rounded-full blur-3xl" style={{ background: "hsl(45 95% 54% / 0.18)" }} />
+        <div className="absolute right-[-6rem] top-10 h-80 w-80 rounded-full blur-3xl" style={{ background: "hsl(221 48% 18% / 0.14)" }} />
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(45 95% 54% / 0.8), transparent)" }} />
+      </div>
       <div className="grain-overlay" />
       <div className="relative z-10">
-        <div className="flex items-center justify-between px-6 py-5 md:px-10 border-b border-border/30 bg-card/40 backdrop-blur-sm">
-          <div className="flex items-center gap-4">
+        <div className="border-b border-border/60 bg-card/72 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 md:px-10">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+              >
+                <ArrowLeft size={16} /> Home
+              </button>
+              <div className="hidden h-10 w-px bg-border/80 md:block" />
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground shadow-soft">
+                  ⚽
+                </div>
+                <div>
+                  <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground">Admin aesthetic</p>
+                  <h1 className="font-heading text-xl md:text-2xl text-foreground">Real Madrid Control Room</h1>
+                </div>
+              </div>
+            </div>
             <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
+              onClick={() => supabase.auth.signOut()}
+              className="flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-4 py-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
             >
-              <ArrowLeft size={16} /> Home
+              <LogOut size={16} /> Sign Out
             </button>
-            <h1 className="font-heading text-xl text-foreground">Admin</h1>
           </div>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body text-sm"
-          >
-            <LogOut size={16} /> Sign Out
-          </button>
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="flex gap-1 mb-8 bg-card/60 rounded-lg p-1 w-fit">
+        <div className="mx-auto max-w-6xl px-6 py-8 md:px-10">
+          <section className="mb-8 grid gap-4 xl:grid-cols-[1.35fr_0.95fr]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card/90 p-8 shadow-overlay">
+              <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(135deg, hsl(221 48% 18% / 0.08), transparent 45%), radial-gradient(circle at top right, hsl(45 95% 54% / 0.18), transparent 36%)" }} />
+              <div className="relative z-10">
+                <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground mb-3">White. Gold. Heritage.</p>
+                <h2 className="font-heading text-4xl md:text-5xl leading-none text-foreground mb-4">
+                  Madridista
+                  <br />
+                  <span className="italic text-accent">Control Room</span>
+                </h2>
+                <p className="max-w-xl font-body text-sm md:text-base leading-relaxed text-muted-foreground">
+                  This backend workspace now carries a full Real Madrid mood: bright whites, deep navy, gold accents, trophy-room energy, and just enough swagger.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">Ramos 92:48</span>
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">La Décima</span>
+                  <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 font-body text-[10px] uppercase tracking-[0.25em] text-foreground">Hala Madrid</span>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {REAL_MADRID.stats.map((s) => (
+                <div key={s.label} className="rounded-[1.5rem] border border-border/60 bg-card/92 p-5 text-center shadow-soft">
+                  <p className="font-heading text-4xl text-accent">{s.value}</p>
+                  <p className="mt-2 font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className="flex flex-wrap gap-2 mb-8 rounded-full border border-border/60 bg-card/80 p-1.5 shadow-soft w-fit">
             <button
               onClick={() => setActiveTab("themes")}
-              className={`px-4 py-2 rounded-md font-body text-sm transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               Themes
             </button>
             <button
               onClick={() => setActiveTab("submissions")}
-              className={`px-4 py-2 rounded-md font-body text-sm transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               <Mail size={14} />
               Submissions
               {submissions.length > 0 && (
-                <span className="bg-accent/20 text-accent text-[10px] font-medium px-1.5 py-0.5 rounded-full">
+                <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">
                   {submissions.length}
                 </span>
               )}
