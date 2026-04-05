@@ -577,7 +577,7 @@ const Admin = () => {
               {themes.map((t) => {
                 const colorInfo = COLOR_VARIANTS.find((c) => c.value === t.color_variant);
                 return (
-                  <div key={t.id} className="flex items-center gap-4 bg-card/80 backdrop-blur-sm rounded-xl p-4 shadow-soft">
+                  <div key={t.id} className="flex items-center gap-4 rounded-[1.5rem] border border-border/50 bg-card/92 p-4 shadow-soft backdrop-blur-xl">
                     {t.banner_url && (
                       <img src={t.banner_url} alt={t.theme} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
                     )}
