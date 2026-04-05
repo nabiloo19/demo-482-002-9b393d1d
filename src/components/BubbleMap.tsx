@@ -65,14 +65,11 @@ const BubbleMap = () => {
 
   const getGlowClass = (variant: string) => {
     switch (variant) {
-      case "rose":
-      case "blush":
-        return "bubble-glow-rose";
-      case "gold":
-      case "sand":
-        return "bubble-glow-gold";
+      case "honey": return "bubble-glow-honey";
+      case "saffron": return "bubble-glow-saffron";
+      case "sand": return "bubble-glow-sand";
+      case "gold": return "bubble-glow-gold";
       case "amber":
-      case "cream":
       default:
         return "bubble-glow-amber";
     }

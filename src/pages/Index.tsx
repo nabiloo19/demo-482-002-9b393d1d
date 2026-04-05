@@ -155,7 +155,7 @@ const IndexPage = () => {
             The Archive
           </h2>
           <p className="font-body text-muted-foreground text-center max-w-xl mx-auto mb-8">
-            Explore the most common themes shared by Yemenis in exile. Click a bubble to hear their stories.
+            Explore the most common themes shared by Yemenis in exile. Tap a bubble to hear their stories.
           </p>
         </div>
         {/* This is the target area where bubbles group */}
