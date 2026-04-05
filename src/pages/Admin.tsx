@@ -63,6 +63,29 @@ const REAL_MADRID = {
 const randomPos = () => Math.floor(15 + Math.random() * 70);
 const randomColor = () => COLOR_VARIANTS[Math.floor(Math.random() * COLOR_VARIANTS.length)].value;
 
+const adminThemeStyle = {
+  "--background": "44 70% 95%",
+  "--foreground": "221 48% 18%",
+  "--card": "0 0% 100%",
+  "--card-foreground": "221 48% 18%",
+  "--popover": "0 0% 100%",
+  "--popover-foreground": "221 48% 18%",
+  "--primary": "45 95% 54%",
+  "--primary-foreground": "221 48% 16%",
+  "--secondary": "221 48% 18%",
+  "--secondary-foreground": "44 70% 95%",
+  "--muted": "44 40% 88%",
+  "--muted-foreground": "221 20% 36%",
+  "--accent": "45 95% 54%",
+  "--accent-foreground": "221 48% 16%",
+  "--border": "44 32% 78%",
+  "--input": "44 32% 78%",
+  "--ring": "45 95% 54%",
+  backgroundColor: "hsl(44 70% 95%)",
+  backgroundImage:
+    "radial-gradient(circle at 12% 16%, hsl(45 95% 54% / 0.24), transparent 24%), radial-gradient(circle at 88% 10%, hsl(221 48% 18% / 0.12), transparent 26%), linear-gradient(180deg, hsl(0 0% 100%), hsl(45 58% 93%))",
+} as CSSProperties;
+
 const Admin = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<any>(null);
