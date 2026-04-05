@@ -523,22 +523,58 @@ const Admin = () => {
               })}
             </div>
 
-            {/* Real Madrid Easter Egg */}
-            <div className="mt-16 border-t border-border/20 pt-8">
-              <div className="bg-card/60 backdrop-blur-sm rounded-2xl p-6 shadow-soft">
-                <h3 className="font-heading text-lg text-foreground mb-1">⚽ La Sala VIP</h3>
-                <p className="font-body text-xs text-muted-foreground mb-4">For the Madridistas. Hala Madrid.</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {REAL_MADRID_PHRASES.map((phrase, i) => (
-                    <div
-                      key={i}
-                      className="bg-background/50 rounded-xl p-3 text-center border border-border/30 hover:border-accent/40 transition-colors"
-                    >
-                      <p className="font-heading text-sm text-foreground/90">{phrase}</p>
+            {/* Real Madrid Full Theme */}
+            <div className="mt-16 border-t border-border/20 pt-8 space-y-6">
+              <div className="text-center">
+                <p className="font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">The Beautiful Game</p>
+                <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-1">⚽ La Sala VIP</h2>
+                <p className="font-heading italic text-accent text-lg">{REAL_MADRID.motto}</p>
+              </div>
+
+              {/* Stats bar */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {REAL_MADRID.stats.map((s) => (
+                  <div key={s.label} className="bg-card/80 rounded-xl p-4 text-center border border-border/30">
+                    <p className="font-heading text-3xl text-accent">{s.value}</p>
+                    <p className="font-body text-[10px] uppercase tracking-widest text-muted-foreground mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Iconic Moments */}
+              <div>
+                <h3 className="font-heading text-lg text-foreground mb-3">Iconic Moments</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {REAL_MADRID.moments.map((m) => (
+                    <div key={m.title} className="bg-card/60 backdrop-blur-sm rounded-xl p-5 border border-border/30 hover:border-accent/30 transition-colors group">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">{m.icon}</span>
+                        <div>
+                          <h4 className="font-heading text-base text-foreground group-hover:text-accent transition-colors">{m.title}</h4>
+                          <p className="font-body text-xs text-muted-foreground mt-1 leading-relaxed">{m.desc}</p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
+
+              {/* Quotes */}
+              <div>
+                <h3 className="font-heading text-lg text-foreground mb-3">From the Stands</h3>
+                <div className="space-y-3">
+                  {REAL_MADRID.quotes.map((q, i) => (
+                    <div key={i} className="bg-background/50 rounded-xl p-5 border-l-2 border-accent/50">
+                      <blockquote className="font-heading italic text-base text-foreground/80">"{q.text}"</blockquote>
+                      <p className="font-body text-[10px] uppercase tracking-widest text-muted-foreground mt-2">{q.author}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="font-body text-xs text-muted-foreground/40 text-center pt-4">
+                Hasta el final, vamos Real ✦
+              </p>
             </div>
           </>}
 
