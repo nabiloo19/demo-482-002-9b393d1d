@@ -85,6 +85,7 @@ const Admin = () => {
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [translationFile, setTranslationFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
   const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
