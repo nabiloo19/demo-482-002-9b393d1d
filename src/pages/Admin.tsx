@@ -278,7 +278,7 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center" style={adminThemeStyle}>
         <p className="font-body text-muted-foreground">Loading...</p>
       </div>
     );
@@ -286,19 +286,32 @@ const Admin = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="relative min-h-screen overflow-hidden bg-background flex items-center justify-center px-4" style={adminThemeStyle}>
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-x-0 top-0 h-56" style={{ backgroundImage: "linear-gradient(180deg, hsl(221 48% 18% / 0.12), transparent)" }} />
+          <div className="absolute -left-16 top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: "hsl(45 95% 54% / 0.22)" }} />
+          <div className="absolute right-[-5rem] top-8 h-72 w-72 rounded-full blur-3xl" style={{ background: "hsl(221 48% 18% / 0.12)" }} />
+        </div>
         <div className="grain-overlay" />
-        <div className="w-full max-w-sm bg-card/90 backdrop-blur-xl rounded-2xl p-8 shadow-overlay relative z-10">
+        <div className="w-full max-w-md bg-card/92 backdrop-blur-xl rounded-[2rem] p-8 shadow-overlay relative z-10 border border-border/60">
+          <p className="font-body text-[10px] uppercase tracking-[0.35em] text-muted-foreground mb-3">Madrid-coded admin</p>
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors mb-6 font-body text-sm"
           >
             <ArrowLeft size={16} /> Back
           </button>
-          <h1 className="font-heading text-2xl text-foreground mb-1">Admin</h1>
-          <p className="font-body text-sm text-muted-foreground mb-6">
-            Sign in to manage themes
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border/60 bg-secondary text-secondary-foreground shadow-soft">
+              ⚽
+            </div>
+            <div>
+              <h1 className="font-heading text-2xl text-foreground mb-1">Real Madrid Control Room</h1>
+              <p className="font-body text-sm text-muted-foreground">
+                White, gold, and calm arrogance.
+              </p>
+            </div>
+          </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <input
               type="email"
@@ -306,7 +319,7 @@ const Admin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+              className="w-full px-4 py-3 rounded-xl bg-background/80 border border-border/60 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
             />
             <input
               type="password"
@@ -315,14 +328,14 @@ const Admin = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition"
+              className="w-full px-4 py-3 rounded-xl bg-background/80 border border-border/60 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40 transition"
             />
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="w-full px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {authLoading ? "Signing in..." : "Sign In"}
+              {authLoading ? "Signing in..." : "Enter the Bernabéu"}
             </button>
           </form>
         </div>
