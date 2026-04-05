@@ -37,14 +37,28 @@ const COLOR_VARIANTS = [
   { value: "gold", label: "Gold", hsl: "40 75% 60%" },
 ] as const;
 
-const REAL_MADRID_PHRASES = [
-  "¡Hala Madrid y nada más!",
-  "Ramos 92:48 💥",
-  "La Décima",
-  "Zidane's volley — pure art",
-  "Cristiano: SIUUUU!",
-  "Hasta el final, vamos Real",
-];
+const REAL_MADRID = {
+  motto: "¡Hala Madrid y nada más!",
+  moments: [
+    { title: "Ramos 92:48", desc: "The header that shook Lisbon. Stoppage time. La Décima was born.", icon: "💥" },
+    { title: "Zidane's Volley", desc: "Glasgow 2002. Left foot. Champions League final. The most beautiful goal ever scored.", icon: "🎯" },
+    { title: "La Décima", desc: "Ten European Cups. Decades of waiting. One night in Lisbon changed everything.", icon: "🏆" },
+    { title: "Cristiano: SIUUUU!", desc: "450 goals. The man who made the impossible routine. The greatest scorer in club history.", icon: "⚡" },
+    { title: "Di Stéfano's Legacy", desc: "The man who built the myth. Five consecutive European Cups. The original galáctico.", icon: "👑" },
+    { title: "Manita at Camp Nou", desc: "5-0. November 2010. The night Barcelona had no answers. Pure Mourinho masterclass.", icon: "🔥" },
+  ],
+  stats: [
+    { label: "Champions League", value: "15" },
+    { label: "La Liga", value: "36" },
+    { label: "Copa del Rey", value: "20" },
+    { label: "Ballon d'Or Winners", value: "12" },
+  ],
+  quotes: [
+    { text: "Madrid never dies.", author: "Everyone who's watched them in the 90th minute" },
+    { text: "If you can't buy them, beat them. If you can't beat them, buy them.", author: "The Bernabéu philosophy" },
+    { text: "I'm not a defender, I'm a goalscorer who plays at the back.", author: "Sergio Ramos, probably" },
+  ],
+};
 
 const randomPos = () => Math.floor(15 + Math.random() * 70);
 const randomColor = () => COLOR_VARIANTS[Math.floor(Math.random() * COLOR_VARIANTS.length)].value;
