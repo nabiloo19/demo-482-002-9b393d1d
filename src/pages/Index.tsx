@@ -88,8 +88,10 @@ const IndexPage = () => {
   );
 
   const getGlowClass = (v: string) => {
-    if (v === "rose" || v === "blush") return "bubble-glow-rose";
-    if (v === "gold" || v === "sand") return "bubble-glow-gold";
+    if (v === "honey") return "bubble-glow-honey";
+    if (v === "saffron") return "bubble-glow-saffron";
+    if (v === "sand") return "bubble-glow-sand";
+    if (v === "gold") return "bubble-glow-gold";
     return "bubble-glow-amber";
   };
 
