@@ -29,6 +29,14 @@ const Footer = () => {
           >
             Contact
           </a>
+          <a
+            href="https://yiepodcast.web.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-xs text-accent hover:text-accent/80 transition-colors uppercase tracking-widest"
+          >
+            Voices Unfiltered ↗
+          </a>
         </div>
         <p className="font-body text-xs text-muted-foreground/60">
           © {new Date().getFullYear()}
