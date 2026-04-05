@@ -1,57 +1,91 @@
 
 
-## Save Story Submissions to Database
+## Plan: Multi-Feature Update
 
-### What will happen
-- A new `submissions` table will be created in the database to store story submissions
-- The "Submit Your Story" form will save entries to this table and show a success message: "Thank you! We will contact you soon."
-- A new "Submissions" tab will be added to the `/admin` panel so you can view all submissions
+This covers 7 changes across Admin, Landing Page, and database.
 
-### How it works
+---
 
-1. **Create `submissions` table** with columns: id, name, email, message, created_at. Public insert allowed (anyone can submit), but only authenticated admins can read/delete.
+### 1. Expand Color Variants to 5 Yellow Shades
 
-2. **Update ParticipateSection** -- wire up the form with state, validation (using zod), and submit logic. On success, show a friendly success message replacing the form briefly, then reset.
+**Admin form**: Replace the 3-option color variant dropdown with 5 yellow-family options: Honey, Amber, Saffron, Sand, Gold. Update `randomColor()` to pick from these 5.
 
-3. **Update Admin page** -- add a "Submissions" tab alongside the existing theme manager, listing all submissions with name, email, message, and timestamp. Include a delete button for cleanup.
+**Landing page CSS**: Replace the 3 bubble glow classes (`bubble-glow-amber`, `bubble-glow-rose`, `bubble-glow-gold`) with 5 yellow-toned glow classes matching the new variant names. Remove the purple/rose tones entirely.
 
-### Technical Details
+**BubbleMap / Index.tsx**: Update `getGlowClass()` to map the 5 new variants to their respective CSS classes.
 
-**Database migration:**
-```sql
-CREATE TABLE public.submissions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  email text NOT NULL,
-  message text NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
+**Theme list in Admin**: Update the color dot display to use the new variant names.
 
-ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
+---
 
--- Anyone can submit
-CREATE POLICY "Anyone can insert submissions"
-  ON public.submissions FOR INSERT
-  WITH CHECK (true);
+### 2. Add Translation/Subtitle Field for Video
 
--- Only authenticated users can read
-CREATE POLICY "Authenticated users can read submissions"
-  ON public.submissions FOR SELECT
-  USING (auth.uid() IS NOT NULL);
+**Database**: Add a `translation` text column to the `themes` table (nullable).
 
--- Only authenticated users can delete
-CREATE POLICY "Authenticated users can delete submissions"
-  ON public.submissions FOR DELETE
-  USING (auth.uid() IS NOT NULL);
-```
+**Admin form**: Add a "Translation / Subtitle" textarea field below the excerpt field.
 
-**ParticipateSection changes:**
-- Add form state (name, email, message) with zod validation
-- On submit, insert into `submissions` table
-- Show success state with "Thank you! We will contact you soon." message
-- Input length limits: name (100), email (255), message (2000)
+**StoryOverlay**: When a video is present and `translation` exists, render it as a subtitle overlay that scrolls/fades in sync with the video using a simple timed display approach (split text into segments, show each one as the video progresses using `onTimeUpdate`).
 
-**Admin page changes:**
-- Add a tab/section below or alongside themes to list submissions
-- Show name, email, message preview, and date
-- Delete button with confirmation (matching existing pattern)
+**Data types**: Add `translation?: string` to `ThemeBubble` interface and map it from `DbTheme`.
+
+---
+
+### 3. Frequency Control with Cap
+
+**Admin form**: Add back a frequency number input with `min=1` and `max=100`. Display a slider or input clamped to this range.
+
+**Landing page**: The bubble sizing already works proportionally (`freq / maxFreq`), so no changes needed there. The max=100 cap in the admin prevents absurd values.
+
+---
+
+### 4. Real Madrid Easter Egg Theme (Admin Only)
+
+Add a small fun section at the bottom of the Admin dashboard (visible only to logged-in admins) with a decorative card showing Real Madrid phrases: "Y nada más", "Ramos header 92:48", "La Décima", "Hala Madrid". This is purely decorative, does not create database entries, and won't affect the landing page.
+
+---
+
+### 5. Remove Light/Dark Toggle, Lock to Dark Mode
+
+**Header.tsx**: Remove the Sun/Moon toggle button and the `isDark` state. On mount, always set `document.documentElement.classList.add("dark")` and `localStorage.setItem("theme", "dark")`.
+
+**index.css**: Keep both light/dark CSS variable blocks (no harm), but the app will always render in dark mode.
+
+---
+
+### 6. Add Podcast Link to Footer and SlideMenu
+
+**Footer.tsx**: Add a new link "The Podcast" pointing to `https://yiepodcast.web.app` with `target="_blank"`.
+
+**SlideMenu.tsx**: Add a nav item "The Podcast" as an external link to the same URL, styled to match existing nav items.
+
+---
+
+### 7. Humanize Landing Page Copy, Remove Em Dashes
+
+Update text in these components to remove all em dashes (`—`) and rewrite copy to feel warmer and more conversational:
+
+- **AboutSection.tsx**: Rewrite the 3 paragraphs and blockquote to be more personal, remove em dashes.
+- **ParticipateSection.tsx**: Soften the copy, remove em dashes from the description.
+- **ContactSection.tsx**: Already clean, minor tone adjustment if needed.
+- **Index.tsx**: Update the Archive section subtitle text.
+- **data/themes.ts**: Update all `excerpt` strings to remove em dashes and humanize phrasing.
+
+---
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/pages/Admin.tsx` | 5 color variants, frequency input (1-100), translation field, Real Madrid card |
+| `src/components/Header.tsx` | Remove theme toggle, force dark mode |
+| `src/components/Footer.tsx` | Add podcast link |
+| `src/components/SlideMenu.tsx` | Add podcast link |
+| `src/components/AboutSection.tsx` | Humanize copy, remove em dashes |
+| `src/components/ParticipateSection.tsx` | Remove em dashes |
+| `src/components/StoryOverlay.tsx` | Show translation as video subtitle |
+| `src/index.css` | Replace 3 bubble glow classes with 5 yellow-toned ones |
+| `src/pages/Index.tsx` | Update `getGlowClass` for 5 variants, update archive subtitle |
+| `src/components/BubbleMap.tsx` | Update `getGlowClass` for 5 variants |
+| `src/data/themes.ts` | Update colorVariant type to 5 options, humanize excerpts |
+| **DB migration** | Add `translation` text column to `themes` table |
+
