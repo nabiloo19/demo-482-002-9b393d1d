@@ -445,7 +445,7 @@ const Admin = () => {
             )}
 
             {showForm && (
-              <form onSubmit={handleSave} className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft mb-8 space-y-5">
+              <form onSubmit={handleSave} className="mb-8 space-y-5 rounded-[1.75rem] border border-border/60 bg-card/92 p-6 md:p-8 shadow-overlay backdrop-blur-xl">
                 <h2 className="font-heading text-lg text-foreground">
                   {editingId ? "Edit Theme" : "New Theme"}
                 </h2>
