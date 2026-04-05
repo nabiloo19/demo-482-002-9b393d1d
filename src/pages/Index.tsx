@@ -71,6 +71,7 @@ const IndexPage = () => {
         bannerUrl: t.banner_url || undefined,
         audioUrl: t.audio_url || undefined,
         videoUrl: t.video_url || undefined,
+        translation: (t as any).translation || undefined,
       }));
     }
     return staticThemes;
