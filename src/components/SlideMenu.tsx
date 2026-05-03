@@ -4,9 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 interface SlideMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  variant?: "default" | "exhibit";
 }
 
-const navLinks = [
+const ALL_LINKS = [
   { label: "About the Project", id: "about" },
   { label: "The Archive", id: "archive" },
   { label: "Share Your Story", id: "participate" },
@@ -18,7 +19,12 @@ const scrollToSection = (id: string) => {
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 
-const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
+const SlideMenu = ({ isOpen, onClose, variant = "default" }: SlideMenuProps) => {
+  const navLinks =
+    variant === "exhibit"
+      ? ALL_LINKS.filter((l) => l.id !== "participate" && l.id !== "contact")
+      : ALL_LINKS;
+
   const handleNavClick = (id: string) => {
     onClose();
     setTimeout(() => scrollToSection(id), 300);
@@ -82,19 +88,21 @@ const SlideMenu = ({ isOpen, onClose }: SlideMenuProps) => {
               </motion.a>
             </div>
 
-            <div className="mt-auto px-10 py-8">
-              <button
-                onClick={() => handleNavClick("participate")}
-                className="w-full px-5 py-3.5 bg-accent text-accent-foreground font-body text-sm font-medium rounded-md hover:bg-accent/90 transition-colors"
-              >
-                Share Your Story
-              </button>
-              <p className="mt-4 font-body text-xs text-card-foreground/50 text-center leading-relaxed">
-                Every memory matters.
-                <br />
-                Share yours with the archive.
-              </p>
-            </div>
+            {variant === "default" && (
+              <div className="mt-auto px-10 py-8">
+                <button
+                  onClick={() => handleNavClick("participate")}
+                  className="w-full px-5 py-3.5 bg-accent text-accent-foreground font-body text-sm font-medium rounded-md hover:bg-accent/90 transition-colors"
+                >
+                  Share Your Story
+                </button>
+                <p className="mt-4 font-body text-xs text-card-foreground/50 text-center leading-relaxed">
+                  Every memory matters.
+                  <br />
+                  Share yours with the archive.
+                </p>
+              </div>
+            )}
           </motion.nav>
         </>
       )}
