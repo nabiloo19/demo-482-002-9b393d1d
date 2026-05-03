@@ -283,7 +283,6 @@ const Admin = () => {
     setAuthLoading(false);
   };
 
-  const [showForgot, setShowForgot] = useState(false);
   const [resetSending, setResetSending] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -301,7 +300,6 @@ const Admin = () => {
       toast({ title: "Couldn't send reset email", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Check your inbox", description: "We sent you a password reset link." });
-      setShowForgot(false);
     }
   };
 
