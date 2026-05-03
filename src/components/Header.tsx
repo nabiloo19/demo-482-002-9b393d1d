@@ -42,7 +42,7 @@ const Header = ({ variant = "default" }: { variant?: "default" | "exhibit" }) =>
           )}
         </div>
       </header>
-      <SlideMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SlideMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} variant={variant} />
     </>
   );
 };
