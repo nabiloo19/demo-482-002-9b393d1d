@@ -313,9 +313,6 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
               <RefreshCw size={16} className={retracting ? "animate-spin" : "group-hover:rotate-90 transition-transform"} />
               {retracting ? "Retracting memories…" : "Refresh memories"}
             </button>
-            <p className="font-body text-xs text-muted-foreground/70">
-              {totalViewed} of {totalSnippets} memories heard
-            </p>
           </div>
         )}
       </section>
