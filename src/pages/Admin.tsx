@@ -197,9 +197,19 @@ const Admin = () => {
   const [translationFile, setTranslationFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
-  const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
+  const [activeTab, setActiveTab] = useState<"themes" | "snippets" | "submissions">("themes");
   const [deleteSubmissionId, setDeleteSubmissionId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Snippet state
+  const [snippets, setSnippets] = useState<SnippetRow[]>([]);
+  const [snippetThemeId, setSnippetThemeId] = useState<string>("");
+  const [snippetCaption, setSnippetCaption] = useState("");
+  const [snippetVideoFile, setSnippetVideoFile] = useState<File | null>(null);
+  const [snippetAudioFile, setSnippetAudioFile] = useState<File | null>(null);
+  const [snippetTranslationFile, setSnippetTranslationFile] = useState<File | null>(null);
+  const [snippetSaving, setSnippetSaving] = useState(false);
+  const [deleteSnippetId, setDeleteSnippetId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setLoading(false); });
@@ -207,11 +217,51 @@ const Admin = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (session) { fetchThemes(); fetchSubmissions(); } }, [session]);
+  useEffect(() => { if (session) { fetchThemes(); fetchSubmissions(); fetchSnippets(); } }, [session]);
 
   const fetchSubmissions = async () => {
     const { data, error } = await supabase.from("submissions").select("*").order("created_at", { ascending: false });
     if (!error && data) setSubmissions(data);
+  };
+
+  const fetchSnippets = async () => {
+    const { data, error } = await supabase.from("snippets").select("*").order("created_at", { ascending: false });
+    if (!error && data) setSnippets(data as SnippetRow[]);
+  };
+
+  const handleSaveSnippet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!snippetThemeId) { toast({ title: "Pick a theme for this snippet", variant: "destructive" }); return; }
+    if (!snippetVideoFile && !snippetAudioFile) { toast({ title: "Add a video or audio clip", variant: "destructive" }); return; }
+    setSnippetSaving(true);
+
+    let video_url: string | null = null;
+    let audio_url: string | null = null;
+    let translation: string | null = null;
+
+    if (snippetVideoFile) { video_url = await uploadFile(snippetVideoFile, "snippets/videos"); if (!video_url) { setSnippetSaving(false); return; } }
+    if (snippetAudioFile) { audio_url = await uploadFile(snippetAudioFile, "snippets/audio"); if (!audio_url) { setSnippetSaving(false); return; } }
+    if (snippetTranslationFile) { translation = await snippetTranslationFile.text(); }
+
+    const { error } = await supabase.from("snippets").insert({
+      theme_id: snippetThemeId,
+      video_url, audio_url, translation,
+      caption: snippetCaption.trim() || null,
+    });
+    if (error) { toast({ title: "Save failed", description: error.message, variant: "destructive" }); }
+    else {
+      toast({ title: "Snippet added!" });
+      setSnippetCaption(""); setSnippetVideoFile(null); setSnippetAudioFile(null); setSnippetTranslationFile(null);
+      fetchSnippets();
+    }
+    setSnippetSaving(false);
+  };
+
+  const handleDeleteSnippet = async (id: string) => {
+    const { error } = await supabase.from("snippets").delete().eq("id", id);
+    if (error) toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    else fetchSnippets();
+    setDeleteSnippetId(null);
   };
 
   const handleDeleteSubmission = async (id: string) => {
