@@ -287,7 +287,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
       </div>
 
       {/* Archive section */}
-      <section id="archive" className="relative py-16 md:py-24">
+      <section id="archive" className="relative py-10 md:py-14">
         <div className="container mx-auto px-4">
           <h2 className="font-heading text-3xl md:text-4xl text-foreground text-center mb-2">
             The Archive
@@ -335,7 +335,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
       {variant === "default" && <ParticipateSection />}
       {variant === "default" && <ContactSection />}
       {variant === "exhibit" && (
-        <section className="relative py-20 md:py-28 px-6 md:px-10">
+        <section className="relative py-14 md:py-16 px-6 md:px-10">
           <div className="max-w-3xl mx-auto text-center">
             <p className="font-heading text-lg md:text-2xl text-foreground tracking-wide flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
               <span>tether</span>
