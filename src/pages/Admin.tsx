@@ -1,7 +1,7 @@
 import { useState, useEffect, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail } from "lucide-react";
+import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail, Film } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ThemeFormData {
@@ -26,6 +26,16 @@ interface ThemeRow {
   banner_url: string | null;
   audio_url: string | null;
   video_url: string | null;
+  created_at: string;
+}
+
+interface SnippetRow {
+  id: string;
+  theme_id: string;
+  video_url: string | null;
+  audio_url: string | null;
+  caption: string | null;
+  translation: string | null;
   created_at: string;
 }
 
