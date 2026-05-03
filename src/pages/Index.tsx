@@ -279,7 +279,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
       <MemoryBurst burstId={burstId} />
 
 
-      <Header />
+      <Header variant={variant} />
 
       {/* About section (text only — bubbles rendered separately) */}
       <div ref={aboutRef}>
@@ -352,7 +352,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
           </div>
         </section>
       )}
-      <Footer />
+      <Footer variant={variant} />
 
       <StoryOverlay theme={selectedTheme} onClose={() => setSelectedTheme(null)} />
     </main>
