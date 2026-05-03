@@ -601,7 +601,8 @@ const Admin = () => {
                   if (themeSnips.length === 0) return null;
                    return (
                      <div key={t.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl">
-                       <div className="flex items-center justify-end mb-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-heading text-base text-foreground">{t.theme}</h3>
                          <span className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{themeSnips.length} snippet{themeSnips.length === 1 ? "" : "s"}</span>
                        </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
