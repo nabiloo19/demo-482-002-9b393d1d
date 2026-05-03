@@ -34,6 +34,11 @@ const AboutSection = () => {
             a thread connecting individual memories into a collective tapestry.
             The larger the bubble, the more stories it holds.
           </p>
+          <p>
+            Tap a bubble to hear a short memory tied to its theme. When you've
+            heard them all, hit the refresh button below the map and the bubbles
+            retract, then re-emerge carrying a new set of memories from the archive.
+          </p>
         </div>
 
         <div className="mt-16 pt-12 border-t border-border/30">
