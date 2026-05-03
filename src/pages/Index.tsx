@@ -48,7 +48,7 @@ const SCATTERED: { x: number; y: number }[] = [
 const easeInOutQuad = (t: number) =>
   t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
-const IndexPage = () => {
+const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" }) => {
   const [selectedTheme, setSelectedTheme] = useState<ThemeBubble | null>(null);
   const isMobile = useIsMobile();
   const [progress, setProgress] = useState(0);
@@ -332,8 +332,23 @@ const IndexPage = () => {
         retracting={retracting}
       />
 
-      <ParticipateSection />
-      <ContactSection />
+      {variant === "default" && <ParticipateSection />}
+      {variant === "default" && <ContactSection />}
+      {variant === "exhibit" && (
+        <section className="relative py-20 md:py-28 px-6 md:px-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="font-heading text-lg md:text-2xl text-foreground tracking-wide flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
+              <span>tether</span>
+              <span className="text-accent/60">|</span>
+              <span>FADA Exhibition</span>
+              <span className="text-accent/60">|</span>
+              <span>04.05 - 2026</span>
+              <span className="text-accent/60">|</span>
+              <span>Bilkent University</span>
+            </p>
+          </div>
+        </section>
+      )}
       <Footer />
 
       <StoryOverlay theme={selectedTheme} onClose={() => setSelectedTheme(null)} />
