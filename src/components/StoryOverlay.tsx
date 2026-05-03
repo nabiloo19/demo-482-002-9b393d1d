@@ -102,14 +102,8 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
 
               <div className="flex flex-col gap-6 px-6 md:px-12 pt-10 pb-10">
                 <div className="text-center">
-                  <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
-                    Theme
-                  </p>
-                  <h2 className="font-heading text-4xl md:text-5xl text-accent font-medium">
-                    {theme.theme}
-                  </h2>
                   {activeCaption && (
-                    <p className="font-body text-sm text-muted-foreground mt-2 italic">
+                    <p className="font-body text-sm text-muted-foreground italic">
                       {activeCaption}
                     </p>
                   )}
