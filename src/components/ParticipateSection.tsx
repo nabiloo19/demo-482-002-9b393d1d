@@ -48,7 +48,7 @@ const ParticipateSection = () => {
   return (
     <section
       id="participate"
-      className="relative py-24 md:py-32 px-6 md:px-10"
+      className="relative py-16 md:py-20 px-6 md:px-10"
     >
       <div className="max-w-2xl mx-auto text-center">
         <p className="font-body text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">
