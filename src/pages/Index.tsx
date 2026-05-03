@@ -490,18 +490,19 @@ const MemoryBurst = ({ burstId }: { burstId: number }) => {
 
   useEffect(() => {
     if (burstId === 0) return;
-    const count = 14;
+    // A few concentric rings near center — gentle, focused, not scattered
+    const count = 4;
     const list = Array.from({ length: count }).map((_, i) => ({
       id: `${burstId}-${i}`,
-      left: 8 + Math.random() * 84,
-      top: 25 + Math.random() * 55,
-      size: 40 + Math.random() * 220,
-      delay: Math.random() * 0.5,
-      hue: 32 + Math.random() * 18, // honey → saffron range, matches bubbles
-      thickness: 1 + Math.random() * 1.5,
+      left: 50,
+      top: 55,
+      size: 80 + i * 40,
+      delay: i * 0.18,
+      hue: 36 + Math.random() * 8,
+      thickness: 1,
     }));
     setRings(list);
-    const t = setTimeout(() => setRings([]), 2600);
+    const t = setTimeout(() => setRings([]), 3200);
     return () => clearTimeout(t);
   }, [burstId]);
 
@@ -520,9 +521,9 @@ const MemoryBurst = ({ burstId }: { burstId: number }) => {
             height: `${r.size}px`,
             marginLeft: `-${r.size / 2}px`,
             marginTop: `-${r.size / 2}px`,
-            border: `${r.thickness}px solid hsl(${r.hue} 85% 60% / 0.65)`,
-            boxShadow: `0 0 24px hsl(${r.hue} 90% 55% / 0.35), inset 0 0 18px hsl(${r.hue} 95% 70% / 0.2)`,
-            animation: `memoryRipple 2200ms cubic-bezier(0.16, 0.84, 0.32, 1) ${r.delay}s forwards`,
+            border: `${r.thickness}px solid hsl(${r.hue} 70% 60% / 0.35)`,
+            boxShadow: `0 0 18px hsl(${r.hue} 80% 55% / 0.18)`,
+            animation: `memoryRipple 2800ms cubic-bezier(0.22, 1, 0.36, 1) ${r.delay}s forwards`,
           }}
         />
       ))}
