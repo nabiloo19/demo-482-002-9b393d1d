@@ -456,6 +456,10 @@ const Admin = () => {
             <button onClick={() => setActiveTab("themes")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               Themes
             </button>
+            <button onClick={() => setActiveTab("snippets")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "snippets" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              <Film size={14} /> Snippets
+              {snippets.length > 0 && <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{snippets.length}</span>}
+            </button>
             <button onClick={() => setActiveTab("submissions")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               <Mail size={14} /> Submissions
               {submissions.length > 0 && <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{submissions.length}</span>}
