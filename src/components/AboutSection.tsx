@@ -30,14 +30,6 @@ const AboutSection = () => {
             below the map and the bubbles retract, then re-emerge carrying a new set of memories from the archive.
           </p>
         </div>
-
-        <div className="mt-16 pt-12 border-t border-border/30">
-          <blockquote className="font-heading italic text-xl md:text-2xl text-foreground/80 max-w-xl mx-auto">
-            "We did not leave home. We carried it with us, in the way we brew our coffee, in the songs we sing to our
-            children."
-          </blockquote>
-          <p className="mt-4 font-body text-xs uppercase tracking-widest text-muted-foreground">From the Archive</p>
-        </div>
       </div>
     </section>
   );
