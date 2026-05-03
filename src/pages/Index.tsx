@@ -60,6 +60,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
   const [currentByTheme, setCurrentByTheme] = useState<Record<string, string>>({});
   const [viewedByTheme, setViewedByTheme] = useState<Record<string, Set<string>>>({});
   const [retracting, setRetracting] = useState(false);
+  const [burstId, setBurstId] = useState(0);
 
   // ── Data ──
   const { data: dbThemes } = useQuery({
@@ -93,15 +94,20 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
     return map;
   }, [dbSnippets]);
 
-  /** Pick a random snippet id for a theme that hasn't been viewed.
-   *  If all viewed, reset and pick any. */
+  /** Pick a snippet id for a theme as randomly as possible using crypto entropy.
+   *  We avoid repeating the immediately-previous snippet when there's more than one. */
   const pickSnippet = useCallback(
-    (themeId: string, viewed: Set<string>): string | undefined => {
+    (themeId: string, previousId?: string): string | undefined => {
       const pool = snippetsByTheme[themeId];
       if (!pool || pool.length === 0) return undefined;
-      const unseen = pool.filter((s) => !viewed.has(s.id));
-      const candidates = unseen.length > 0 ? unseen : pool;
-      return candidates[Math.floor(Math.random() * candidates.length)].id;
+      const candidates =
+        pool.length > 1 && previousId
+          ? pool.filter((s) => s.id !== previousId)
+          : pool;
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      const idx = buf[0] % candidates.length;
+      return candidates[idx].id;
     },
     [snippetsByTheme]
   );
@@ -113,7 +119,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
       const next = { ...prev };
       Object.keys(snippetsByTheme).forEach((themeId) => {
         if (!next[themeId]) {
-          const picked = pickSnippet(themeId, new Set());
+          const picked = pickSnippet(themeId);
           if (picked) next[themeId] = picked;
         }
       });
@@ -121,21 +127,17 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
     });
   }, [dbSnippets, snippetsByTheme, pickSnippet]);
 
-  /** Refresh: re-pick a snippet for every theme, prioritizing unseen ones */
+  /** Refresh: re-pick a fully random snippet for every theme. */
   const handleRefresh = useCallback(() => {
     if (retracting) return;
     setRetracting(true);
+    setBurstId((n) => n + 1);
     // After retract animation, swap snippets and let them re-expand
     setTimeout(() => {
       setCurrentByTheme((prev) => {
         const next: Record<string, string> = {};
         Object.keys(snippetsByTheme).forEach((themeId) => {
-          const viewed = viewedByTheme[themeId] || new Set<string>();
-          // Mark the currently shown one as viewed before re-rolling
-          const wasShown = prev[themeId];
-          const updatedViewed = new Set(viewed);
-          if (wasShown) updatedViewed.add(wasShown);
-          const picked = pickSnippet(themeId, updatedViewed);
+          const picked = pickSnippet(themeId, prev[themeId]);
           if (picked) next[themeId] = picked;
         });
         return next;
@@ -274,6 +276,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div className="grain-overlay" />
+      <MemoryBurst burstId={burstId} />
 
 
       <Header />
@@ -477,6 +480,74 @@ const BubbleLayer = ({
           </div>
         );
       })}
+    </div>
+  );
+};
+
+/** Memory-themed burst that plays each time the refresh button is pressed.
+ *  Uses fixed pointer-events-none overlay so it never affects layout. */
+const MEMORY_WORDS = [
+  "qahwa", "bakhoor", "adhan", "umm", "abi", "bayt", "sana'a",
+  "habibi", "yemen", "ghurba", "hanin", "jeddah", "souq",
+];
+const MEMORY_GLYPHS = ["✦", "✧", "❀", "❁", "·", "◦", "✺"];
+
+const MemoryBurst = ({ burstId }: { burstId: number }) => {
+  const [particles, setParticles] = useState<
+    { id: string; left: number; top: number; delay: number; dx: number; dy: number; rot: number; scale: number; text: string; isWord: boolean; hue: number }[]
+  >([]);
+
+  useEffect(() => {
+    if (burstId === 0) return;
+    const count = 28;
+    const list = Array.from({ length: count }).map((_, i) => {
+      const isWord = Math.random() < 0.45;
+      const text = isWord
+        ? MEMORY_WORDS[Math.floor(Math.random() * MEMORY_WORDS.length)]
+        : MEMORY_GLYPHS[Math.floor(Math.random() * MEMORY_GLYPHS.length)];
+      return {
+        id: `${burstId}-${i}`,
+        left: 10 + Math.random() * 80,
+        top: 30 + Math.random() * 50,
+        delay: Math.random() * 0.4,
+        dx: (Math.random() - 0.5) * 220,
+        dy: -120 - Math.random() * 220,
+        rot: (Math.random() - 0.5) * 60,
+        scale: 0.6 + Math.random() * 0.9,
+        text,
+        isWord,
+        hue: 35 + Math.random() * 20, // amber/honey range
+      };
+    });
+    setParticles(list);
+    const t = setTimeout(() => setParticles([]), 2400);
+    return () => clearTimeout(t);
+  }, [burstId]);
+
+  if (particles.length === 0) return null;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
+      {particles.map((p) => (
+        <span
+          key={p.id}
+          className={`absolute font-heading select-none ${p.isWord ? "italic" : ""}`}
+          style={{
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            color: `hsl(${p.hue} 85% 65% / 0.85)`,
+            textShadow: `0 0 12px hsl(${p.hue} 90% 55% / 0.55)`,
+            fontSize: p.isWord ? `${0.85 * p.scale}rem` : `${1.4 * p.scale}rem`,
+            animation: `memoryFloat 2200ms cubic-bezier(0.2, 0.7, 0.3, 1) ${p.delay}s forwards`,
+            // pass motion targets to the keyframes via custom props
+            ["--mx" as any]: `${p.dx}px`,
+            ["--my" as any]: `${p.dy}px`,
+            ["--mr" as any]: `${p.rot}deg`,
+          }}
+        >
+          {p.text}
+        </span>
+      ))}
     </div>
   );
 };

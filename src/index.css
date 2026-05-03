@@ -235,3 +235,19 @@
   opacity: 0.25;
   filter: blur(2px);
 }
+@keyframes memoryFloat {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.6);
+    filter: blur(2px);
+  }
+  15% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--mx, 0), var(--my, -160px)) rotate(var(--mr, 0deg)) scale(1.05);
+    filter: blur(1px);
+  }
+}
