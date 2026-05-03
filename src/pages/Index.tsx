@@ -9,6 +9,7 @@ import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import ParticipateSection from "@/components/ParticipateSection";
 import Footer from "@/components/Footer";
+import { RefreshCw } from "lucide-react";
 
 interface DbTheme {
   id: string;
@@ -21,6 +22,15 @@ interface DbTheme {
   banner_url: string | null;
   audio_url: string | null;
   video_url: string | null;
+}
+
+interface DbSnippet {
+  id: string;
+  theme_id: string;
+  video_url: string | null;
+  audio_url: string | null;
+  caption: string | null;
+  translation: string | null;
 }
 
 /** Scattered positions: bubbles sit on left/right edges during the About section */
@@ -45,6 +55,12 @@ const IndexPage = () => {
   const aboutRef = useRef<HTMLDivElement>(null);
   const archiveAreaRef = useRef<HTMLDivElement>(null);
 
+  // Snippet state: which snippet id is "current" for each theme,
+  // and which snippet ids the user has already viewed (per theme).
+  const [currentByTheme, setCurrentByTheme] = useState<Record<string, string>>({});
+  const [viewedByTheme, setViewedByTheme] = useState<Record<string, Set<string>>>({});
+  const [retracting, setRetracting] = useState(false);
+
   // ── Data ──
   const { data: dbThemes } = useQuery({
     queryKey: ["themes"],
@@ -58,7 +74,102 @@ const IndexPage = () => {
     },
   });
 
+  const { data: dbSnippets } = useQuery({
+    queryKey: ["snippets"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("snippets").select("*");
+      if (error) throw error;
+      return data as DbSnippet[];
+    },
+  });
+
+  // Group snippets by theme id
+  const snippetsByTheme = useMemo(() => {
+    const map: Record<string, DbSnippet[]> = {};
+    (dbSnippets || []).forEach((s) => {
+      if (!map[s.theme_id]) map[s.theme_id] = [];
+      map[s.theme_id].push(s);
+    });
+    return map;
+  }, [dbSnippets]);
+
+  /** Pick a random snippet id for a theme that hasn't been viewed.
+   *  If all viewed, reset and pick any. */
+  const pickSnippet = useCallback(
+    (themeId: string, viewed: Set<string>): string | undefined => {
+      const pool = snippetsByTheme[themeId];
+      if (!pool || pool.length === 0) return undefined;
+      const unseen = pool.filter((s) => !viewed.has(s.id));
+      const candidates = unseen.length > 0 ? unseen : pool;
+      return candidates[Math.floor(Math.random() * candidates.length)].id;
+    },
+    [snippetsByTheme]
+  );
+
+  // Initialize current snippets when snippets load
+  useEffect(() => {
+    if (!dbSnippets) return;
+    setCurrentByTheme((prev) => {
+      const next = { ...prev };
+      Object.keys(snippetsByTheme).forEach((themeId) => {
+        if (!next[themeId]) {
+          const picked = pickSnippet(themeId, new Set());
+          if (picked) next[themeId] = picked;
+        }
+      });
+      return next;
+    });
+  }, [dbSnippets, snippetsByTheme, pickSnippet]);
+
+  /** Refresh: re-pick a snippet for every theme, prioritizing unseen ones */
+  const handleRefresh = useCallback(() => {
+    if (retracting) return;
+    setRetracting(true);
+    // After retract animation, swap snippets and let them re-expand
+    setTimeout(() => {
+      setCurrentByTheme((prev) => {
+        const next: Record<string, string> = {};
+        Object.keys(snippetsByTheme).forEach((themeId) => {
+          const viewed = viewedByTheme[themeId] || new Set<string>();
+          // Mark the currently shown one as viewed before re-rolling
+          const wasShown = prev[themeId];
+          const updatedViewed = new Set(viewed);
+          if (wasShown) updatedViewed.add(wasShown);
+          const picked = pickSnippet(themeId, updatedViewed);
+          if (picked) next[themeId] = picked;
+        });
+        return next;
+      });
+      setViewedByTheme((prev) => {
+        const next: Record<string, Set<string>> = {};
+        Object.keys(currentByTheme).forEach((themeId) => {
+          const set = new Set(prev[themeId] || []);
+          set.add(currentByTheme[themeId]);
+          next[themeId] = set;
+        });
+        return next;
+      });
+      setRetracting(false);
+    }, 700);
+  }, [retracting, snippetsByTheme, viewedByTheme, currentByTheme, pickSnippet]);
+
   const themes: ThemeBubble[] = useMemo(() => {
+    const attachSnippet = (t: ThemeBubble): ThemeBubble => {
+      const snippetId = currentByTheme[t.id];
+      if (!snippetId) return t;
+      const snip = (snippetsByTheme[t.id] || []).find((s) => s.id === snippetId);
+      if (!snip) return t;
+      return {
+        ...t,
+        currentSnippet: {
+          videoUrl: snip.video_url || undefined,
+          audioUrl: snip.audio_url || undefined,
+          caption: snip.caption || undefined,
+          translation: snip.translation || undefined,
+        },
+      };
+    };
+
     if (dbThemes && dbThemes.length > 0) {
       return dbThemes.map((t) => ({
         id: t.id,
@@ -72,10 +183,33 @@ const IndexPage = () => {
         audioUrl: t.audio_url || undefined,
         videoUrl: t.video_url || undefined,
         translation: (t as any).translation || undefined,
-      }));
+      })).map(attachSnippet);
     }
-    return staticThemes;
-  }, [dbThemes]);
+    return staticThemes.map(attachSnippet);
+  }, [dbThemes, currentByTheme, snippetsByTheme]);
+
+  // Mark snippet viewed when overlay opens
+  useEffect(() => {
+    if (!selectedTheme) return;
+    const snippetId = currentByTheme[selectedTheme.id];
+    if (!snippetId) return;
+    setViewedByTheme((prev) => {
+      const set = new Set(prev[selectedTheme.id] || []);
+      set.add(snippetId);
+      return { ...prev, [selectedTheme.id]: set };
+    });
+  }, [selectedTheme, currentByTheme]);
+
+  // "All viewed" hint: total snippets vs viewed snippets across themes
+  const { totalSnippets, totalViewed } = useMemo(() => {
+    let total = 0;
+    let viewed = 0;
+    Object.keys(snippetsByTheme).forEach((tid) => {
+      total += snippetsByTheme[tid].length;
+      viewed += (viewedByTheme[tid]?.size || 0);
+    });
+    return { totalSnippets: total, totalViewed: viewed };
+  }, [snippetsByTheme, viewedByTheme]);
 
   const maxFreq = useMemo(() => Math.max(...themes.map((t) => t.frequency)), [themes]);
 
@@ -163,6 +297,24 @@ const IndexPage = () => {
         <div ref={archiveAreaRef} className="relative w-full h-[75vh] sm:h-[65vh] md:h-[70vh]">
           {/* Bubbles are rendered here when grouped */}
         </div>
+
+        {/* Refresh memories button */}
+        {totalSnippets > 0 && (
+          <div className="container mx-auto px-4 mt-6 flex flex-col items-center gap-2">
+            <button
+              onClick={handleRefresh}
+              disabled={retracting}
+              className="group inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 hover:bg-accent/20 px-5 py-3 font-body text-sm uppercase tracking-[0.2em] text-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              aria-label="Refresh memories"
+            >
+              <RefreshCw size={16} className={retracting ? "animate-spin" : "group-hover:rotate-90 transition-transform"} />
+              {retracting ? "Retracting memories…" : "Refresh memories"}
+            </button>
+            <p className="font-body text-xs text-muted-foreground/70">
+              {totalViewed} of {totalSnippets} memories heard
+            </p>
+          </div>
+        )}
       </section>
 
       {/* ── Bubble layer ── */}
@@ -177,6 +329,7 @@ const IndexPage = () => {
         archiveAreaRef={archiveAreaRef}
         onSelect={setSelectedTheme}
         isMobile={isMobile}
+        retracting={retracting}
       />
 
       <ParticipateSection />
