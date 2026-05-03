@@ -481,69 +481,50 @@ const BubbleLayer = ({
   );
 };
 
-/** Memory-themed burst that plays each time the refresh button is pressed.
- *  Uses fixed pointer-events-none overlay so it never affects layout. */
-const MEMORY_WORDS = [
-  "qahwa", "bakhoor", "adhan", "umm", "abi", "bayt", "sana'a",
-  "habibi", "yemen", "ghurba", "hanin", "jeddah", "souq",
-];
-const MEMORY_GLYPHS = ["✦", "✧", "❀", "❁", "·", "◦", "✺"];
-
+/** Circle-ripple burst that plays on every refresh.
+ *  Stays in the bubble visual language: soft amber/honey rings expanding outward. */
 const MemoryBurst = ({ burstId }: { burstId: number }) => {
-  const [particles, setParticles] = useState<
-    { id: string; left: number; top: number; delay: number; dx: number; dy: number; rot: number; scale: number; text: string; isWord: boolean; hue: number }[]
+  const [rings, setRings] = useState<
+    { id: string; left: number; top: number; size: number; delay: number; hue: number; thickness: number }[]
   >([]);
 
   useEffect(() => {
     if (burstId === 0) return;
-    const count = 28;
-    const list = Array.from({ length: count }).map((_, i) => {
-      const isWord = Math.random() < 0.45;
-      const text = isWord
-        ? MEMORY_WORDS[Math.floor(Math.random() * MEMORY_WORDS.length)]
-        : MEMORY_GLYPHS[Math.floor(Math.random() * MEMORY_GLYPHS.length)];
-      return {
-        id: `${burstId}-${i}`,
-        left: 10 + Math.random() * 80,
-        top: 30 + Math.random() * 50,
-        delay: Math.random() * 0.4,
-        dx: (Math.random() - 0.5) * 220,
-        dy: -120 - Math.random() * 220,
-        rot: (Math.random() - 0.5) * 60,
-        scale: 0.6 + Math.random() * 0.9,
-        text,
-        isWord,
-        hue: 35 + Math.random() * 20, // amber/honey range
-      };
-    });
-    setParticles(list);
-    const t = setTimeout(() => setParticles([]), 2400);
+    const count = 14;
+    const list = Array.from({ length: count }).map((_, i) => ({
+      id: `${burstId}-${i}`,
+      left: 8 + Math.random() * 84,
+      top: 25 + Math.random() * 55,
+      size: 40 + Math.random() * 220,
+      delay: Math.random() * 0.5,
+      hue: 32 + Math.random() * 18, // honey → saffron range, matches bubbles
+      thickness: 1 + Math.random() * 1.5,
+    }));
+    setRings(list);
+    const t = setTimeout(() => setRings([]), 2600);
     return () => clearTimeout(t);
   }, [burstId]);
 
-  if (particles.length === 0) return null;
+  if (rings.length === 0) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
-      {particles.map((p) => (
+      {rings.map((r) => (
         <span
-          key={p.id}
-          className={`absolute font-heading select-none ${p.isWord ? "italic" : ""}`}
+          key={r.id}
+          className="absolute rounded-full"
           style={{
-            left: `${p.left}%`,
-            top: `${p.top}%`,
-            color: `hsl(${p.hue} 85% 65% / 0.85)`,
-            textShadow: `0 0 12px hsl(${p.hue} 90% 55% / 0.55)`,
-            fontSize: p.isWord ? `${0.85 * p.scale}rem` : `${1.4 * p.scale}rem`,
-            animation: `memoryFloat 2200ms cubic-bezier(0.2, 0.7, 0.3, 1) ${p.delay}s forwards`,
-            // pass motion targets to the keyframes via custom props
-            ["--mx" as any]: `${p.dx}px`,
-            ["--my" as any]: `${p.dy}px`,
-            ["--mr" as any]: `${p.rot}deg`,
+            left: `${r.left}%`,
+            top: `${r.top}%`,
+            width: `${r.size}px`,
+            height: `${r.size}px`,
+            marginLeft: `-${r.size / 2}px`,
+            marginTop: `-${r.size / 2}px`,
+            border: `${r.thickness}px solid hsl(${r.hue} 85% 60% / 0.65)`,
+            boxShadow: `0 0 24px hsl(${r.hue} 90% 55% / 0.35), inset 0 0 18px hsl(${r.hue} 95% 70% / 0.2)`,
+            animation: `memoryRipple 2200ms cubic-bezier(0.16, 0.84, 0.32, 1) ${r.delay}s forwards`,
           }}
-        >
-          {p.text}
-        </span>
+        />
       ))}
     </div>
   );
