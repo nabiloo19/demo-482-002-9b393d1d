@@ -10,6 +10,13 @@ export interface ThemeBubble {
   audioUrl?: string;
   videoUrl?: string;
   translation?: string;
+  /** Currently selected short snippet (chosen at runtime) */
+  currentSnippet?: {
+    videoUrl?: string;
+    audioUrl?: string;
+    caption?: string;
+    translation?: string;
+  };
 }
 
 export const themes: ThemeBubble[] = [

@@ -1,7 +1,7 @@
 import { useState, useEffect, type CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail } from "lucide-react";
+import { Upload, Trash2, Plus, LogOut, ArrowLeft, Pencil, Mail, Film } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ThemeFormData {
@@ -26,6 +26,16 @@ interface ThemeRow {
   banner_url: string | null;
   audio_url: string | null;
   video_url: string | null;
+  created_at: string;
+}
+
+interface SnippetRow {
+  id: string;
+  theme_id: string;
+  video_url: string | null;
+  audio_url: string | null;
+  caption: string | null;
+  translation: string | null;
   created_at: string;
 }
 
@@ -187,9 +197,19 @@ const Admin = () => {
   const [translationFile, setTranslationFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [submissions, setSubmissions] = useState<{ id: string; name: string; email: string; message: string; created_at: string }[]>([]);
-  const [activeTab, setActiveTab] = useState<"themes" | "submissions">("themes");
+  const [activeTab, setActiveTab] = useState<"themes" | "snippets" | "submissions">("themes");
   const [deleteSubmissionId, setDeleteSubmissionId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Snippet state
+  const [snippets, setSnippets] = useState<SnippetRow[]>([]);
+  const [snippetThemeId, setSnippetThemeId] = useState<string>("");
+  const [snippetCaption, setSnippetCaption] = useState("");
+  const [snippetVideoFile, setSnippetVideoFile] = useState<File | null>(null);
+  const [snippetAudioFile, setSnippetAudioFile] = useState<File | null>(null);
+  const [snippetTranslationFile, setSnippetTranslationFile] = useState<File | null>(null);
+  const [snippetSaving, setSnippetSaving] = useState(false);
+  const [deleteSnippetId, setDeleteSnippetId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setLoading(false); });
@@ -197,11 +217,51 @@ const Admin = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (session) { fetchThemes(); fetchSubmissions(); } }, [session]);
+  useEffect(() => { if (session) { fetchThemes(); fetchSubmissions(); fetchSnippets(); } }, [session]);
 
   const fetchSubmissions = async () => {
     const { data, error } = await supabase.from("submissions").select("*").order("created_at", { ascending: false });
     if (!error && data) setSubmissions(data);
+  };
+
+  const fetchSnippets = async () => {
+    const { data, error } = await supabase.from("snippets").select("*").order("created_at", { ascending: false });
+    if (!error && data) setSnippets(data as SnippetRow[]);
+  };
+
+  const handleSaveSnippet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!snippetThemeId) { toast({ title: "Pick a theme for this snippet", variant: "destructive" }); return; }
+    if (!snippetVideoFile && !snippetAudioFile) { toast({ title: "Add a video or audio clip", variant: "destructive" }); return; }
+    setSnippetSaving(true);
+
+    let video_url: string | null = null;
+    let audio_url: string | null = null;
+    let translation: string | null = null;
+
+    if (snippetVideoFile) { video_url = await uploadFile(snippetVideoFile, "snippets/videos"); if (!video_url) { setSnippetSaving(false); return; } }
+    if (snippetAudioFile) { audio_url = await uploadFile(snippetAudioFile, "snippets/audio"); if (!audio_url) { setSnippetSaving(false); return; } }
+    if (snippetTranslationFile) { translation = await snippetTranslationFile.text(); }
+
+    const { error } = await supabase.from("snippets").insert({
+      theme_id: snippetThemeId,
+      video_url, audio_url, translation,
+      caption: snippetCaption.trim() || null,
+    });
+    if (error) { toast({ title: "Save failed", description: error.message, variant: "destructive" }); }
+    else {
+      toast({ title: "Snippet added!" });
+      setSnippetCaption(""); setSnippetVideoFile(null); setSnippetAudioFile(null); setSnippetTranslationFile(null);
+      fetchSnippets();
+    }
+    setSnippetSaving(false);
+  };
+
+  const handleDeleteSnippet = async (id: string) => {
+    const { error } = await supabase.from("snippets").delete().eq("id", id);
+    if (error) toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    else fetchSnippets();
+    setDeleteSnippetId(null);
   };
 
   const handleDeleteSubmission = async (id: string) => {
@@ -396,6 +456,10 @@ const Admin = () => {
             <button onClick={() => setActiveTab("themes")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors ${activeTab === "themes" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               Themes
             </button>
+            <button onClick={() => setActiveTab("snippets")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "snippets" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+              <Film size={14} /> Snippets
+              {snippets.length > 0 && <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{snippets.length}</span>}
+            </button>
             <button onClick={() => setActiveTab("submissions")} className={`px-4 py-2 rounded-full font-body text-xs uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${activeTab === "submissions" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
               <Mail size={14} /> Submissions
               {submissions.length > 0 && <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{submissions.length}</span>}
@@ -451,6 +515,96 @@ const Admin = () => {
               })}
             </div>
           </>}
+
+          {activeTab === "snippets" && (
+            <div className="space-y-6">
+              {/* Upload form */}
+              <form onSubmit={handleSaveSnippet} className="space-y-5 rounded-[1.75rem] border border-border/60 bg-card/92 p-6 md:p-8 shadow-overlay backdrop-blur-xl">
+                <div>
+                  <h2 className="font-heading text-lg text-foreground">Add a memory snippet</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-1">Short audio-visual clips (1–3 min). Bubbles play one at random; the refresh button shuffles to a new one.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Theme *</label>
+                    <select value={snippetThemeId} onChange={(e) => setSnippetThemeId(e.target.value)} required className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition">
+                      <option value="">— Pick a theme —</option>
+                      {themes.map((t) => (<option key={t.id} value={t.id}>{t.theme}</option>))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Caption (optional)</label>
+                    <input type="text" value={snippetCaption} onChange={(e) => setSnippetCaption(e.target.value)} placeholder="e.g. Grandmother's morning ritual" className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Video Clip</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetVideoFile ? snippetVideoFile.name : "Choose video..."}
+                      <input type="file" accept="video/*" onChange={(e) => setSnippetVideoFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Audio Clip</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetAudioFile ? snippetAudioFile.name : "Choose audio..."}
+                      <input type="file" accept="audio/*" onChange={(e) => setSnippetAudioFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Subtitles (.txt)</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetTranslationFile ? snippetTranslationFile.name : "Choose .txt..."}
+                      <input type="file" accept=".txt,.srt" onChange={(e) => setSnippetTranslationFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+                <button type="submit" disabled={snippetSaving} className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50">
+                  {snippetSaving ? "Uploading..." : "Add Snippet"}
+                </button>
+              </form>
+
+              {/* Snippet list grouped by theme */}
+              <div className="space-y-3">
+                {snippets.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-12">No snippets yet. Add your first short clip above.</p>}
+                {themes.map((t) => {
+                  const themeSnips = snippets.filter((s) => s.theme_id === t.id);
+                  if (themeSnips.length === 0) return null;
+                  return (
+                    <div key={t.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-heading text-base text-foreground">{t.theme}</h3>
+                        <span className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{themeSnips.length} snippet{themeSnips.length === 1 ? "" : "s"}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {themeSnips.map((s) => (
+                          <div key={s.id} className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3">
+                            <div className="flex-1 min-w-0">
+                              {s.caption && <p className="font-body text-sm text-foreground truncate">{s.caption}</p>}
+                              <div className="flex items-center gap-2 mt-1">
+                                {s.video_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">▶ Video</span>}
+                                {s.audio_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">♫ Audio</span>}
+                                {s.translation && <span className="font-body text-[10px] uppercase tracking-wider text-accent">📝 Subs</span>}
+                              </div>
+                            </div>
+                            {deleteSnippetId === s.id ? (
+                              <div className="flex items-center gap-1">
+                                <button onClick={() => handleDeleteSnippet(s.id)} className="px-2 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded hover:bg-destructive/90 transition-colors">OK</button>
+                                <button onClick={() => setDeleteSnippetId(null)} className="px-2 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded hover:bg-secondary/80 transition-colors">No</button>
+                              </div>
+                            ) : (
+                              <button onClick={() => setDeleteSnippetId(s.id)} className="p-1.5 text-muted-foreground hover:text-destructive transition-colors" aria-label="Delete snippet"><Trash2 size={14} /></button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {activeTab === "submissions" && (
             <div className="space-y-3">

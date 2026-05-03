@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      snippets: {
+        Row: {
+          audio_url: string | null
+          caption: string | null
+          created_at: string
+          id: string
+          theme_id: string
+          translation: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          theme_id: string
+          translation?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          caption?: string | null
+          created_at?: string
+          id?: string
+          theme_id?: string
+          translation?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "snippets_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       submissions: {
         Row: {
           created_at: string
