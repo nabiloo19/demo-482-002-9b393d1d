@@ -599,12 +599,11 @@ const Admin = () => {
                 {themes.map((t) => {
                   const themeSnips = snippets.filter((s) => s.theme_id === t.id);
                   if (themeSnips.length === 0) return null;
-                  return (
-                    <div key={t.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-heading text-base text-foreground">{t.theme}</h3>
-                        <span className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{themeSnips.length} snippet{themeSnips.length === 1 ? "" : "s"}</span>
-                      </div>
+                   return (
+                     <div key={t.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl">
+                       <div className="flex items-center justify-end mb-3">
+                         <span className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{themeSnips.length} snippet{themeSnips.length === 1 ? "" : "s"}</span>
+                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {themeSnips.map((s) => (
                           <div key={s.id} className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3">
