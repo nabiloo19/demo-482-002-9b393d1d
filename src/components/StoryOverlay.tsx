@@ -44,10 +44,17 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentSubtitle, setCurrentSubtitle] = useState("");
 
+  // Prefer the currently selected snippet's media; fall back to the long form
+  const activeVideo = theme?.currentSnippet?.videoUrl || theme?.videoUrl;
+  const activeAudio = theme?.currentSnippet?.audioUrl || theme?.audioUrl;
+  const activeTranslation =
+    theme?.currentSnippet?.translation || theme?.translation;
+  const activeCaption = theme?.currentSnippet?.caption;
+
   const subtitleSegments = useMemo(() => {
-    if (!theme?.translation) return [];
-    return parseSubtitles(theme.translation);
-  }, [theme?.translation]);
+    if (!activeTranslation) return [];
+    return parseSubtitles(activeTranslation);
+  }, [activeTranslation]);
 
   const handleTimeUpdate = useCallback(() => {
     if (!videoRef.current || subtitleSegments.length === 0) return;
@@ -79,7 +86,7 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
             <div
-              className="relative w-full max-w-2xl rounded-2xl shadow-overlay overflow-hidden pointer-events-auto max-h-[90vh] overflow-y-auto border border-border/30"
+              className="relative w-full max-w-6xl rounded-3xl shadow-overlay overflow-hidden pointer-events-auto max-h-[92vh] overflow-y-auto border border-border/30"
               style={{
                 background: "hsl(var(--background) / 0.95)",
                 backdropFilter: "blur(20px)",
@@ -93,14 +100,19 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                 <X size={20} strokeWidth={1.5} />
               </button>
 
-              <div className="flex flex-col gap-5 px-6 md:px-8 pt-8 pb-8">
+              <div className="flex flex-col gap-6 px-6 md:px-12 pt-10 pb-10">
                 <div className="text-center">
                   <p className="font-body text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">
                     Theme
                   </p>
-                  <h2 className="font-heading text-3xl md:text-4xl text-accent font-medium">
+                  <h2 className="font-heading text-4xl md:text-5xl text-accent font-medium">
                     {theme.theme}
                   </h2>
+                  {activeCaption && (
+                    <p className="font-body text-sm text-muted-foreground mt-2 italic">
+                      {activeCaption}
+                    </p>
+                  )}
                 </div>
 
                 {theme.bannerUrl && (
@@ -113,12 +125,13 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                   </div>
                 )}
 
-                {theme.videoUrl && (
+                {activeVideo && (
                   <div className="rounded-xl overflow-hidden relative">
                     <video
                       ref={videoRef}
-                      src={theme.videoUrl}
+                      src={activeVideo}
                       controls
+                      autoPlay
                       className="w-full aspect-video object-cover"
                       poster={theme.bannerUrl || undefined}
                       onTimeUpdate={handleTimeUpdate}
@@ -131,9 +144,9 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="absolute bottom-12 left-4 right-4 text-center"
+                        className="absolute bottom-16 left-4 right-4 text-center"
                       >
-                        <span className="inline-block bg-background/80 backdrop-blur-sm text-foreground font-body text-sm md:text-base px-4 py-2 rounded-lg">
+                        <span className="inline-block bg-background/80 backdrop-blur-sm text-foreground font-body text-base md:text-lg px-5 py-2.5 rounded-lg">
                           {currentSubtitle}
                         </span>
                       </motion.div>
@@ -147,7 +160,7 @@ const StoryOverlay = ({ theme, onClose }: StoryOverlayProps) => {
                   </p>
                 )}
 
-                {theme.audioUrl && <AudioPlayer src={theme.audioUrl} />}
+                {activeAudio && <AudioPlayer src={activeAudio} />}
               </div>
             </div>
           </motion.div>
