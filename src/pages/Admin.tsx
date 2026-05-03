@@ -283,6 +283,28 @@ const Admin = () => {
     setAuthLoading(false);
   };
 
+  const [showForgot, setShowForgot] = useState(false);
+  const [resetSending, setResetSending] = useState(false);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({ title: "Enter your email first", variant: "destructive" });
+      return;
+    }
+    setResetSending(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResetSending(false);
+    if (error) {
+      toast({ title: "Couldn't send reset email", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Check your inbox", description: "We sent you a password reset link." });
+      setShowForgot(false);
+    }
+  };
+
   const uploadFile = async (file: File, folder: string): Promise<string | null> => {
     const ext = file.name.split(".").pop();
     const path = `${folder}/${crypto.randomUUID()}.${ext}`;
@@ -384,6 +406,14 @@ const Admin = () => {
             <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="w-full px-4 py-3 rounded-xl bg-background/80 border border-border/60 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40 transition" />
             <button type="submit" disabled={authLoading} className="w-full px-5 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50">
               {authLoading ? "Signing in..." : "Enter the Bernabéu"}
+            </button>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetSending}
+              className="w-full text-center font-body text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+            >
+              {resetSending ? "Sending reset link..." : "Forgot your password?"}
             </button>
           </form>
         </div>
