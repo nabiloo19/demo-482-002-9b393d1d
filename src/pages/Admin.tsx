@@ -516,6 +516,96 @@ const Admin = () => {
             </div>
           </>}
 
+          {activeTab === "snippets" && (
+            <div className="space-y-6">
+              {/* Upload form */}
+              <form onSubmit={handleSaveSnippet} className="space-y-5 rounded-[1.75rem] border border-border/60 bg-card/92 p-6 md:p-8 shadow-overlay backdrop-blur-xl">
+                <div>
+                  <h2 className="font-heading text-lg text-foreground">Add a memory snippet</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-1">Short audio-visual clips (1–3 min). Bubbles play one at random; the refresh button shuffles to a new one.</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Theme *</label>
+                    <select value={snippetThemeId} onChange={(e) => setSnippetThemeId(e.target.value)} required className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition">
+                      <option value="">— Pick a theme —</option>
+                      {themes.map((t) => (<option key={t.id} value={t.id}>{t.theme}</option>))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Caption (optional)</label>
+                    <input type="text" value={snippetCaption} onChange={(e) => setSnippetCaption(e.target.value)} placeholder="e.g. Grandmother's morning ritual" className="w-full px-4 py-3 rounded-lg bg-background/50 border border-border/50 font-body text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/30 transition" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Video Clip</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetVideoFile ? snippetVideoFile.name : "Choose video..."}
+                      <input type="file" accept="video/*" onChange={(e) => setSnippetVideoFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Audio Clip</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetAudioFile ? snippetAudioFile.name : "Choose audio..."}
+                      <input type="file" accept="audio/*" onChange={(e) => setSnippetAudioFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                  <div>
+                    <label className="font-body text-xs uppercase tracking-widest text-muted-foreground mb-2 block">Subtitles (.txt)</label>
+                    <label className="flex items-center gap-2 px-4 py-3 rounded-lg bg-background/50 border border-border/50 cursor-pointer hover:bg-background/70 transition font-body text-sm text-muted-foreground">
+                      <Upload size={16} />{snippetTranslationFile ? snippetTranslationFile.name : "Choose .txt..."}
+                      <input type="file" accept=".txt,.srt" onChange={(e) => setSnippetTranslationFile(e.target.files?.[0] || null)} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+                <button type="submit" disabled={snippetSaving} className="px-6 py-3 bg-primary text-primary-foreground font-body text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50">
+                  {snippetSaving ? "Uploading..." : "Add Snippet"}
+                </button>
+              </form>
+
+              {/* Snippet list grouped by theme */}
+              <div className="space-y-3">
+                {snippets.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-12">No snippets yet. Add your first short clip above.</p>}
+                {themes.map((t) => {
+                  const themeSnips = snippets.filter((s) => s.theme_id === t.id);
+                  if (themeSnips.length === 0) return null;
+                  return (
+                    <div key={t.id} className="rounded-[1.5rem] border border-border/50 bg-card/92 p-5 shadow-soft backdrop-blur-xl">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-heading text-base text-foreground">{t.theme}</h3>
+                        <span className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{themeSnips.length} snippet{themeSnips.length === 1 ? "" : "s"}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {themeSnips.map((s) => (
+                          <div key={s.id} className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 p-3">
+                            <div className="flex-1 min-w-0">
+                              {s.caption && <p className="font-body text-sm text-foreground truncate">{s.caption}</p>}
+                              <div className="flex items-center gap-2 mt-1">
+                                {s.video_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">▶ Video</span>}
+                                {s.audio_url && <span className="font-body text-[10px] uppercase tracking-wider text-accent">♫ Audio</span>}
+                                {s.translation && <span className="font-body text-[10px] uppercase tracking-wider text-accent">📝 Subs</span>}
+                              </div>
+                            </div>
+                            {deleteSnippetId === s.id ? (
+                              <div className="flex items-center gap-1">
+                                <button onClick={() => handleDeleteSnippet(s.id)} className="px-2 py-1 bg-destructive text-destructive-foreground font-body text-xs rounded hover:bg-destructive/90 transition-colors">OK</button>
+                                <button onClick={() => setDeleteSnippetId(null)} className="px-2 py-1 bg-secondary text-secondary-foreground font-body text-xs rounded hover:bg-secondary/80 transition-colors">No</button>
+                              </div>
+                            ) : (
+                              <button onClick={() => setDeleteSnippetId(s.id)} className="p-1.5 text-muted-foreground hover:text-destructive transition-colors" aria-label="Delete snippet"><Trash2 size={14} /></button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {activeTab === "submissions" && (
             <div className="space-y-3">
               {submissions.length === 0 && <p className="font-body text-sm text-muted-foreground text-center py-12">No submissions yet.</p>}
