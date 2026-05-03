@@ -93,15 +93,20 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
     return map;
   }, [dbSnippets]);
 
-  /** Pick a random snippet id for a theme that hasn't been viewed.
-   *  If all viewed, reset and pick any. */
+  /** Pick a snippet id for a theme as randomly as possible using crypto entropy.
+   *  We avoid repeating the immediately-previous snippet when there's more than one. */
   const pickSnippet = useCallback(
-    (themeId: string, viewed: Set<string>): string | undefined => {
+    (themeId: string, previousId?: string): string | undefined => {
       const pool = snippetsByTheme[themeId];
       if (!pool || pool.length === 0) return undefined;
-      const unseen = pool.filter((s) => !viewed.has(s.id));
-      const candidates = unseen.length > 0 ? unseen : pool;
-      return candidates[Math.floor(Math.random() * candidates.length)].id;
+      const candidates =
+        pool.length > 1 && previousId
+          ? pool.filter((s) => s.id !== previousId)
+          : pool;
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      const idx = buf[0] % candidates.length;
+      return candidates[idx].id;
     },
     [snippetsByTheme]
   );
@@ -113,7 +118,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
       const next = { ...prev };
       Object.keys(snippetsByTheme).forEach((themeId) => {
         if (!next[themeId]) {
-          const picked = pickSnippet(themeId, new Set());
+          const picked = pickSnippet(themeId);
           if (picked) next[themeId] = picked;
         }
       });
@@ -121,21 +126,17 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
     });
   }, [dbSnippets, snippetsByTheme, pickSnippet]);
 
-  /** Refresh: re-pick a snippet for every theme, prioritizing unseen ones */
+  /** Refresh: re-pick a fully random snippet for every theme. */
   const handleRefresh = useCallback(() => {
     if (retracting) return;
     setRetracting(true);
+    setBurstId((n) => n + 1);
     // After retract animation, swap snippets and let them re-expand
     setTimeout(() => {
       setCurrentByTheme((prev) => {
         const next: Record<string, string> = {};
         Object.keys(snippetsByTheme).forEach((themeId) => {
-          const viewed = viewedByTheme[themeId] || new Set<string>();
-          // Mark the currently shown one as viewed before re-rolling
-          const wasShown = prev[themeId];
-          const updatedViewed = new Set(viewed);
-          if (wasShown) updatedViewed.add(wasShown);
-          const picked = pickSnippet(themeId, updatedViewed);
+          const picked = pickSnippet(themeId, prev[themeId]);
           if (picked) next[themeId] = picked;
         });
         return next;
