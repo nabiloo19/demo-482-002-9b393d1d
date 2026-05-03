@@ -60,6 +60,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
   const [currentByTheme, setCurrentByTheme] = useState<Record<string, string>>({});
   const [viewedByTheme, setViewedByTheme] = useState<Record<string, Set<string>>>({});
   const [retracting, setRetracting] = useState(false);
+  const [burstId, setBurstId] = useState(0);
 
   // ── Data ──
   const { data: dbThemes } = useQuery({
