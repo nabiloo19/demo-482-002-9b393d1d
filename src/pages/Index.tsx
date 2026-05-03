@@ -352,6 +352,7 @@ const BubbleLayer = ({
   archiveAreaRef,
   onSelect,
   isMobile,
+  retracting,
 }: {
   themes: ThemeBubble[];
   getBubbleSize: (f: number) => number;
@@ -362,6 +363,7 @@ const BubbleLayer = ({
   archiveAreaRef: React.RefObject<HTMLDivElement | null>;
   onSelect: (t: ThemeBubble) => void;
   isMobile: boolean;
+  retracting: boolean;
 }) => {
   const [positions, setPositions] = useState<{ left: number; top: number }[]>([]);
 
@@ -436,6 +438,9 @@ const BubbleLayer = ({
                 width: `${size}px`,
                 height: `${size}px`,
                 animation: `float ${6 + (bubble.frequency % 5)}s ease-in-out ${((index * 0.73) % 5).toFixed(2)}s infinite`,
+                transform: retracting ? "scale(0)" : "scale(1)",
+                transition: `transform 600ms cubic-bezier(0.5, 0, 0.2, 1) ${(index * 25) % 400}ms`,
+                opacity: retracting ? 0 : 1,
               }}
             >
               {bubble.theme && size > 45 && (
