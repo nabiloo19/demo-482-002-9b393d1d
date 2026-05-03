@@ -276,6 +276,7 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div className="grain-overlay" />
+      <MemoryBurst burstId={burstId} />
 
 
       <Header />
