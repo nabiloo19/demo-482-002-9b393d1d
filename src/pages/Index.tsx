@@ -410,6 +410,44 @@ const BubbleLayer = ({
         return { left, top };
       });
 
+      // Collision resolution — push overlapping bubbles apart while keeping them
+      // within the archive area when grouped. A few relaxation passes are enough.
+      const radii = themes.map((b) => getBubbleSize(b.frequency) / 2);
+      const padding = 6;
+      const minLeft = archiveRect.left + 8;
+      const maxLeft = archiveRect.right - 8;
+      const minTop = archiveRect.top + 8;
+      const maxTop = archiveRect.bottom - 8;
+      for (let iter = 0; iter < 8; iter++) {
+        for (let i = 0; i < newPositions.length; i++) {
+          for (let j = i + 1; j < newPositions.length; j++) {
+            const a = newPositions[i];
+            const b = newPositions[j];
+            const dx = b.left - a.left;
+            const dy = b.top - a.top;
+            const dist = Math.hypot(dx, dy) || 0.0001;
+            const minDist = radii[i] + radii[j] + padding;
+            if (dist < minDist) {
+              const overlap = (minDist - dist) / 2;
+              const nx = dx / dist;
+              const ny = dy / dist;
+              a.left -= nx * overlap;
+              a.top -= ny * overlap;
+              b.left += nx * overlap;
+              b.top += ny * overlap;
+            }
+          }
+        }
+        // Clamp to archive bounds proportionally to grouping progress
+        if (easedProgress > 0.4) {
+          for (let i = 0; i < newPositions.length; i++) {
+            const r = radii[i];
+            newPositions[i].left = Math.min(maxLeft - r, Math.max(minLeft + r, newPositions[i].left));
+            newPositions[i].top = Math.min(maxTop - r, Math.max(minTop + r, newPositions[i].top));
+          }
+        }
+      }
+
       setPositions(newPositions);
     };
 
@@ -420,7 +458,7 @@ const BubbleLayer = ({
       window.removeEventListener("scroll", calculate);
       window.removeEventListener("resize", calculate);
     };
-  }, [themes, easedProgress, aboutRef, archiveAreaRef]);
+  }, [themes, easedProgress, aboutRef, archiveAreaRef, getBubbleSize]);
 
   if (positions.length === 0) return null;
 
