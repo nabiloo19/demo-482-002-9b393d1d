@@ -410,6 +410,28 @@ const BubbleLayer = ({
         return { left, top };
       });
 
+      // Recenter the grouped cluster on the archive area's center.
+      // We compute the centroid of the grouped positions and shift everything
+      // so the cluster sits centered, scaled by the grouping progress.
+      if (easedProgress > 0) {
+        const archiveCenterX = archiveRect.left + archiveRect.width / 2;
+        const archiveCenterY = archiveRect.top + archiveRect.height / 2;
+        let cx = 0;
+        let cy = 0;
+        themes.forEach((bubble) => {
+          cx += archiveRect.left + (bubble.x / 100) * archiveRect.width;
+          cy += archiveRect.top + (bubble.y / 100) * archiveRect.height;
+        });
+        cx /= themes.length;
+        cy /= themes.length;
+        const shiftX = (archiveCenterX - cx) * easedProgress;
+        const shiftY = (archiveCenterY - cy) * easedProgress;
+        newPositions.forEach((p) => {
+          p.left += shiftX;
+          p.top += shiftY;
+        });
+      }
+
       // Collision resolution — push overlapping bubbles apart while keeping them
       // within the archive area when grouped. A few relaxation passes are enough.
       const radii = themes.map((b) => getBubbleSize(b.frequency) / 2);
