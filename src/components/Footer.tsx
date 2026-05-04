@@ -44,6 +44,14 @@ const Footer = ({ variant = "default" }: { variant?: "default" | "exhibit" }) =>
           © {new Date().getFullYear()}
         </p>
       </div>
+      <div className="max-w-4xl mx-auto mt-6 text-center">
+        <a
+          href="/references"
+          className="font-body text-[10px] text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors uppercase tracking-widest"
+        >
+          References
+        </a>
+      </div>
     </footer>
   );
 };
