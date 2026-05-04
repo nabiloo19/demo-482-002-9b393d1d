@@ -299,6 +299,37 @@ const IndexPage = ({ variant = "default" }: { variant?: "default" | "exhibit" })
         {/* This is the target area where bubbles group */}
         <div ref={archiveAreaRef} className="relative w-full h-[75vh] sm:h-[65vh] md:h-[70vh]">
           {/* Bubbles are rendered here when grouped */}
+          {/* Three small decorative bubbles around the cluster */}
+          <span
+            aria-hidden
+            className="absolute rounded-full bubble-glow-honey pointer-events-none"
+            style={{
+              width: 14, height: 14, left: "12%", top: "22%",
+              animation: "float 7s ease-in-out 0.4s infinite",
+              opacity: easedProgress,
+              transition: "opacity 600ms ease",
+            }}
+          />
+          <span
+            aria-hidden
+            className="absolute rounded-full bubble-glow-saffron pointer-events-none"
+            style={{
+              width: 10, height: 10, left: "86%", top: "70%",
+              animation: "float 9s ease-in-out 1.2s infinite",
+              opacity: easedProgress,
+              transition: "opacity 600ms ease",
+            }}
+          />
+          <span
+            aria-hidden
+            className="absolute rounded-full bubble-glow-amber pointer-events-none"
+            style={{
+              width: 12, height: 12, left: "78%", top: "18%",
+              animation: "float 8s ease-in-out 0.8s infinite",
+              opacity: easedProgress,
+              transition: "opacity 600ms ease",
+            }}
+          />
         </div>
 
         {/* Refresh memories button */}
@@ -409,6 +440,28 @@ const BubbleLayer = ({
 
         return { left, top };
       });
+
+      // Recenter the grouped cluster on the archive area's center.
+      // We compute the centroid of the grouped positions and shift everything
+      // so the cluster sits centered, scaled by the grouping progress.
+      if (easedProgress > 0) {
+        const archiveCenterX = archiveRect.left + archiveRect.width / 2;
+        const archiveCenterY = archiveRect.top + archiveRect.height / 2;
+        let cx = 0;
+        let cy = 0;
+        themes.forEach((bubble) => {
+          cx += archiveRect.left + (bubble.x / 100) * archiveRect.width;
+          cy += archiveRect.top + (bubble.y / 100) * archiveRect.height;
+        });
+        cx /= themes.length;
+        cy /= themes.length;
+        const shiftX = (archiveCenterX - cx) * easedProgress;
+        const shiftY = (archiveCenterY - cy) * easedProgress;
+        newPositions.forEach((p) => {
+          p.left += shiftX;
+          p.top += shiftY;
+        });
+      }
 
       // Collision resolution — push overlapping bubbles apart while keeping them
       // within the archive area when grouped. A few relaxation passes are enough.
