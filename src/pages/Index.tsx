@@ -458,7 +458,7 @@ const BubbleLayer = ({
       window.removeEventListener("scroll", calculate);
       window.removeEventListener("resize", calculate);
     };
-  }, [themes, easedProgress, aboutRef, archiveAreaRef]);
+  }, [themes, easedProgress, aboutRef, archiveAreaRef, getBubbleSize]);
 
   if (positions.length === 0) return null;
 
